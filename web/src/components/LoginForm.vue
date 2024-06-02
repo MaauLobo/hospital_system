@@ -10,10 +10,7 @@
       </div>
       <div class="actions">
         <div class="remember-me">
-          <input type="checkbox" id="remember-me" />
-          <label for="remember-me">Lembrar de mim?</label>
         </div>
-        <a href="#">Esqueceu a senha?</a>
       </div>
       <button type="submit"><span>LOGIN</span></button>
     </form>
@@ -43,7 +40,7 @@ h2 {
 
 .input-group {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .input-group input {
