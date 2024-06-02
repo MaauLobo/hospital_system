@@ -1,7 +1,7 @@
 <template>
   <div class="login-form">
     <h2>LOGIN</h2>
-    <form>
+    <form @submit.prevent="handleLogin">
       <div class="input-group">
         <input type="text" id="username" placeholder="Usuário" />
       </div>
@@ -20,6 +20,13 @@
 <script>
 export default {
   name: 'LoginForm',
+  methods: {
+    handleLogin() {
+      // Aqui você pode adicionar a lógica de autenticação
+      // Se a autenticação for bem-sucedida, redirecione para a rota "home"
+      this.$router.push({ name: 'home' });
+    }
+  }
 };
 </script>
 
@@ -40,7 +47,7 @@ h2 {
 
 .input-group {
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .input-group input {
