@@ -10,6 +10,8 @@
     "axios": "^1.7.2",
     "core-js": "^3.8.3",
     "jwt-decode": "^4.0.0",
+    "leaflet": "^1.9.4",
+    "mapbox-gl": "^3.4.0",
     "sweetalert2": "^11.11.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3"

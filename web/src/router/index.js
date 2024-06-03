@@ -24,6 +24,12 @@ const routes = [
     component: () => import('../views/Sheduling.vue'),
     meta: { title: 'Sheduling' },
   },
+  {
+    path: '/tracking',
+    name: 'tracking',
+    component: () => import('../views/Tracking.vue'),
+    meta: { title: 'Tracking' },
+  },
 ];
 
 const router = createRouter({
