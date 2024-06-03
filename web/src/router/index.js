@@ -18,6 +18,12 @@ const routes = [
     component: () => import('../views/HomeView.vue'),
     meta: { title: 'Home' },
   },
+  {
+    path: '/sheduling',
+    name: 'sheduling',
+    component: () => import('../views/Sheduling.vue'),
+    meta: { title: 'Sheduling' },
+  },
 ];
 
 const router = createRouter({

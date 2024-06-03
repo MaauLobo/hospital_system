@@ -18,10 +18,10 @@
           </a>
         </li>
         <li>
-          <a href="#">
+          <router-link to="/sheduling">
             <i class="fas fa-calendar-alt"></i>
             <span>Agendamentos</span>
-          </a>
+          </router-link>
         </li>
         <li>
           <a href="#">
