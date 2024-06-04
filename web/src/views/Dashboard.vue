@@ -45,24 +45,24 @@
         <h2>Rastreamento de Pacientes</h2>
         <div class="patient-list">
           <div class="filters">
-        <input type="text" v-model="searchName" @input="filterPatients" placeholder="Buscar por nome" />
-        <input type="text" v-model="searchLocation" @input="filterPatients" placeholder="Buscar por setor" />
-        <select v-model="selectedUrgency" @change="filterPatients">
-          <option value="">Todos</option>
-          <option value="Não Urgente">Não Urgente</option>
-          <option value="Pouco Urgente">Pouco Urgente</option>
-          <option value="Urgente">Urgente</option>
-          <option value="Muito Urgente">Muito Urgente</option>
-          <option value="Emergência Absoluta">Emergência Absoluta</option>
-          <option value="Maior Urgência">Maior Urgência</option>
-        </select>
-        <select v-model="selectedStatus" @change="filterPatients">
-          <option value="">Todos</option>
-          <option value="Aguardando transporte">Aguardando transporte</option>
-          <option value="Em transporte">Em transporte</option>
-          <option value="Chegou ao destino">Chegou ao destino</option>
-        </select>
-      </div>
+            <input type="text" v-model="searchName" @input="filterPatients" placeholder="Buscar por nome" />
+            <input type="text" v-model="searchLocation" @input="filterPatients" placeholder="Buscar por setor" />
+            <select v-model="selectedUrgency" @change="filterPatients">
+              <option value="">Todos</option>
+              <option value="Não Urgente">Não Urgente</option>
+              <option value="Pouco Urgente">Pouco Urgente</option>
+              <option value="Urgente">Urgente</option>
+              <option value="Muito Urgente">Muito Urgente</option>
+              <option value="Emergência Absoluta">Emergência Absoluta</option>
+              <option value="Maior Urgência">Maior Urgência</option>
+            </select>
+            <select v-model="selectedStatus" @change="filterPatients">
+              <option value="">Todos</option>
+              <option value="Aguardando transporte">Aguardando transporte</option>
+              <option value="Em transporte">Em transporte</option>
+              <option value="Chegou ao destino">Chegou ao destino</option>
+            </select>
+          </div>
           <table>
             <thead>
               <tr>
@@ -73,7 +73,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="patient in filteredPatients" :key="patient.id">
+              <tr v-for="patient in paginatedPatients" :key="patient.id">
                 <td>{{ patient.name }}</td>
                 <td>{{ patient.status }}</td>
                 <td>{{ patient.location }}</td>
@@ -81,6 +81,10 @@
               </tr>
             </tbody>
           </table>
+          <div class="pagination-controls">
+            <button @click="prevPage" :disabled="currentPage === 1">Anterior</button>
+            <button @click="nextPage" :disabled="currentPage === totalPages">Próximo</button>
+          </div>
         </div>
       </div>
     </div>
@@ -119,14 +123,28 @@ export default {
         { id: 10, name: 'Pedro Rocha', status: 'Aguardando transporte', location: 'Setor J', urgency: 'Pouco Urgente' },
         { id: 11, name: 'Mariana Pereira', status: 'Em transporte', location: 'Setor K', urgency: 'Não Urgente' },
         { id: 12, name: 'Lucas Martins', status: 'Chegou ao destino', location: 'Setor L', urgency: 'Pouco Urgente' },
-        { id: 13, name: 'Aline Silva', status: 'Aguardando transporte', location: 'Setor M', urgency: 'Emergência Absoluta' }
+        { id: 13, name: 'Aline Silva', status: 'Aguardando transporte', location: 'Setor M', urgency: 'Emergência Absoluta' },
+        { id: 14, name: 'New Patient', status: 'Aguardando transporte', location: 'Setor N', urgency: 'Urgente' }, // Exemplo de paciente adicional
+        // Adicione mais pacientes conforme necessário
       ],
       searchName: '',
       searchLocation: '',
       selectedUrgency: '',
       selectedStatus: '',
+      currentPage: 1,
+      itemsPerPage: 13,
       filteredPatients: [],
     };
+  },
+  computed: {
+    paginatedPatients() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredPatients.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredPatients.length / this.itemsPerPage);
+    },
   },
   mounted() {
     this.renderBarChart('dataAChart', [12, 19, 3, 5, 2]);
@@ -218,10 +236,21 @@ export default {
             return this.compareUrgency(a.urgency, b.urgency);
           }
         });
+      this.currentPage = 1; // Reset to first page after filtering
     },
     compareUrgency(a, b) {
       const urgencyOrder = ['Não Urgente', 'Pouco Urgente', 'Urgente', 'Muito Urgente', 'Emergência Absoluta'];
       return urgencyOrder.indexOf(a) - urgencyOrder.indexOf(b);
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
     },
   },
 };
@@ -348,6 +377,7 @@ export default {
   padding: 10px;
   background: white;
   border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .filters select,
@@ -367,6 +397,10 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.patient-list-widget h2{
+  text-align: left;
+}
+
 .patient-list table {
   width: 100%;
   border-collapse: collapse;
@@ -377,6 +411,27 @@ export default {
   padding: 15px;
   text-align: left;
   border-bottom: 1px solid #dee2e6;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.pagination-controls button {
+  padding: 10px;
+  font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.pagination-controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .urgency-low {
