@@ -43,7 +43,7 @@
       </li>
     </ul>
     <div class="sidebar-footer">
-      <a href="#">
+      <a href="#" @click.prevent="logout">
         <i class="fas fa-sign-out-alt"></i>
         <span>Logout</span>
       </a>
@@ -52,8 +52,23 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
+
 export default {
   name: 'Sidebar',
+  setup() {
+    const router = useRouter();
+
+    const logout = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      router.push({ name: 'login' });
+    };
+
+    return {
+      logout,
+    };
+  },
 };
 </script>
 

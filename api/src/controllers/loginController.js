@@ -24,10 +24,10 @@ const fazerLogin = (req, res) => {
     }
 
     if (Array.isArray(userData) && userData.length === 1) {
-      const { UserID, username, name } = userData[0];
+      const { id, username, name } = userData[0];
 
       const userInfo = {
-        userid: UserID,
+        userid: id,
         user: username,
         name: name,
       };

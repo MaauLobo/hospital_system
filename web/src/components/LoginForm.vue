@@ -3,13 +3,17 @@
     <h2>LOGIN</h2>
     <form @submit.prevent="handleLogin">
       <div class="input-group">
-        <input type="text" id="username" placeholder="Usuário" />
+        <input type="text" v-model="username" id="username" placeholder="Usuário" />
       </div>
       <div class="input-group">
-        <input type="password" id="password" placeholder="Senha" />
+        <input :type="showPassword ? 'text' : 'password'" v-model="password" id="password" placeholder="Senha" />
+        <span class="password-toggle" @click="togglePasswordVisibility">
+          <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+        </span>
       </div>
       <div class="actions">
         <div class="remember-me">
+          <!-- Checkbox para lembrar-me pode ser adicionado aqui -->
         </div>
       </div>
       <button type="submit"><span>LOGIN</span></button>
@@ -18,13 +22,39 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'LoginForm',
+  data() {
+    return {
+      username: '',
+      password: '',
+      showPassword: false
+    };
+  },
   methods: {
-    handleLogin() {
-      // Aqui você pode adicionar a lógica de autenticação
-      // Se a autenticação for bem-sucedida, redirecione para a rota "home"
-      this.$router.push({ name: 'dashboard' });
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
+    },
+    async handleLogin() {
+      try {
+        console.log(`Tentando login com username: ${this.username} e password: ${this.password}`);
+        const response = await axios.post('http://localhost:3333/login', {
+          username: this.username,
+          password: this.password
+        });
+
+        if (response.data.authenticated) {
+          localStorage.setItem('token', response.data.token);
+          this.$router.push({ name: 'dashboard' });
+        } else {
+          alert('Credenciais inválidas');
+        }
+      } catch (error) {
+        console.error('Erro durante o login:', error);
+        alert('Erro no servidor. Tente novamente mais tarde.');
+      }
     }
   }
 };
@@ -46,6 +76,7 @@ h2 {
 }
 
 .input-group {
+  position: relative;
   width: 100%;
   margin-bottom: 20px;
 }
@@ -57,6 +88,14 @@ h2 {
   border: none;
   border-radius: 5px;
   background-color: #D9D9D9; /* Cor de fundo cinza */
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 
 .actions {
@@ -123,6 +162,6 @@ button:hover {
 button span {
   position: relative;
   z-index: 1;
-  color: inherit; /* Permite a mudança de cor no hover */
+  color: inherit; 
 }
 </style>

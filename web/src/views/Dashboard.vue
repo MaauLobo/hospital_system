@@ -5,7 +5,7 @@
       <div class="header">
         <h1>Dashboard User</h1>
         <div class="user-info">
-          <span>Mauricio Lobo</span>
+          <span>{{ name }}</span>
           <i class="fas fa-user-circle"></i>
         </div>
       </div>
@@ -94,6 +94,7 @@
 <script>
 import { Chart, registerables } from 'chart.js';
 import Sidebar from '@/components/sidebar.vue';
+import { jwtDecode } from 'jwt-decode';
 
 Chart.register(...registerables);
 
@@ -104,10 +105,11 @@ export default {
   },
   data() {
     return {
+      name: '',
       infoCards: [
         { value: '89', label: 'Total Pacientes', icon: 'fas fa-user', color: '#28a745' },
         { value: '17', label: 'Pacientes Urgentes', icon: 'fas fa-exclamation-circle', color: '#dc3545' },
-        { value: '55', label: 'Transportes Realizados', icon: 'fas fa-car', color: '#6f42c1' },
+        { value: '55', label: 'Transportes Realizados', icon: 'fas fa-bed', color: '#6f42c1' },
         { value: '40', label: 'Aguardando Transporte', icon: 'fas fa-clock', color: '#007bff' },
       ],
       patients: [
@@ -136,6 +138,17 @@ export default {
       filteredPatients: [],
     };
   },
+  created() {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        console.log(decodedToken)
+        this.name = decodedToken.name;
+        this.role = decodedToken.role;
+      } else {
+        console.log('Nenhum token encontrado no localStorage');
+      }
+    },
   computed: {
     paginatedPatients() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
@@ -153,6 +166,7 @@ export default {
     this.filterPatients();
   },
   methods: {
+
     renderBarChart(canvasId, data) {
       const ctx = document.getElementById(canvasId).getContext('2d');
       new Chart(ctx, {
