@@ -3,9 +3,9 @@
     <Sidebar />
     <div class="dashboard-view">
       <div class="header">
-        <h1>Mauricio Lobo</h1>
+        <h1>Dashboard User</h1>
         <div class="user-info">
-          <span>Jonathan Doe</span>
+          <span>Mauricio Lobo</span>
           <i class="fas fa-user-circle"></i>
         </div>
       </div>
