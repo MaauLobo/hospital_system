@@ -36,6 +36,12 @@ const routes = [
     component: () => import('../views/Dashboard.vue'),
     meta: { title: 'Dashboard' },
   },
+  {
+    path: '/request',
+    name: 'request',
+    component: () => import('../views/Request.vue'),
+    meta: { title: 'Request' },
+  },
 ];
 
 const router = createRouter({

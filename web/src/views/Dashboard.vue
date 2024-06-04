@@ -142,7 +142,6 @@ export default {
       const token = localStorage.getItem('token');
       if (token) {
         const decodedToken = jwtDecode(token);
-        console.log(decodedToken)
         this.name = decodedToken.name;
         this.role = decodedToken.role;
       } else {

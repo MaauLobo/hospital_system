@@ -12,10 +12,10 @@
         </router-link>
       </li>
       <li>
-        <a href="#">
-          <i class="fas fa-user"></i>
-          <span>Pacientes</span>
-        </a>
+        <router-link to="/request">
+          <i class="fas fa-bell"></i>
+          <span>Solicitações</span>
+        </router-link>
       </li>
       <li>
         <router-link to="/sheduling">
