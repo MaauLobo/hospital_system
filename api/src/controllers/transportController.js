@@ -39,20 +39,19 @@ const getTransportRequestsByMaqueiroId = (req, res) => {
 const createTransportRequest = (req, res) => {
   const data = req.body;
   transportRequestModel.insertTransportRequest(data, (err, insertId) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-    const description = 'Solicitação de transporte criada';
-
-    historicoModel.registrarHistorico(insertId, description, (err) => {
       if (err) {
-        console.log("Erro ao registrar no histórico: ", err);
+          return res.status(500).json({ message: 'Erro interno do servidor' });
       }
-    });
-    return res.status(201).json({ message: 'Solicitação de transporte criada com sucesso', id: insertId });
+      const description = 'Solicitação de transporte criada';
+
+      historicoModel.registrarHistorico(insertId, description, (err) => {
+          if (err) {
+              console.log("Erro ao registrar no histórico: ", err);
+          }
+      });
+      return res.status(201).json({ message: 'Solicitação de transporte criada com sucesso', id: insertId });
   });
 };
-
 
 const updateTransportRequest = (req, res) => {
   const { id } = req.params;
