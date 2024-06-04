@@ -1,15 +1,15 @@
 <template>
   <div class="sidebar">
     <div class="sidebar-header">
-      <i class="fas fa-bars"></i>
-      <h2>Menu</h2>
+      <img src="@/assets/logo-prosel1.png" alt="Prosel Logo" class="logo">
+      <h2>Prosel</h2>
     </div>
     <ul class="sidebar-menu">
       <li>
-        <a href="#">
+        <router-link to="/dashboard">
           <i class="fas fa-tachometer-alt"></i>
           <span>Dashboard</span>
-        </a>
+        </router-link>
       </li>
       <li>
         <a href="#">
@@ -24,16 +24,16 @@
         </router-link>
       </li>
       <li>
-      <li>
         <router-link to="/tracking">
           <i class="fas fa-compass"></i>
           <span>Rastreamento</span>
         </router-link>
       </li>
-      <a href="#">
-        <i class="fas fa-chart-line"></i>
-        <span>Relatórios</span>
-      </a>
+      <li>
+        <a href="#">
+          <i class="fas fa-chart-line"></i>
+          <span>Relatórios</span>
+        </a>
       </li>
       <li>
         <a href="#">
@@ -64,7 +64,6 @@ export default {
   width: 70px;
   height: 100vh;
   background: linear-gradient(to right, #4385A8, #136692);
-  /* Gradiente de fundo */
   color: white;
   display: flex;
   flex-direction: column;
@@ -85,7 +84,8 @@ export default {
   justify-content: center;
 }
 
-.sidebar-header i {
+.sidebar-header img.logo {
+  height: 40px;
   margin-right: 10px;
 }
 

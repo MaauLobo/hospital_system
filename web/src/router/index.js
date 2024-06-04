@@ -30,6 +30,12 @@ const routes = [
     component: () => import('../views/Tracking.vue'),
     meta: { title: 'Tracking' },
   },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('../views/Dashboard.vue'),
+    meta: { title: 'Dashboard' },
+  },
 ];
 
 const router = createRouter({
