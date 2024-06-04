@@ -24,7 +24,7 @@ export default {
     handleLogin() {
       // Aqui você pode adicionar a lógica de autenticação
       // Se a autenticação for bem-sucedida, redirecione para a rota "home"
-      this.$router.push({ name: 'home' });
+      this.$router.push({ name: 'dashboard' });
     }
   }
 };
