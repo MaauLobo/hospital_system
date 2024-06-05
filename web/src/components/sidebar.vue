@@ -43,7 +43,7 @@
       </li>
     </ul>
     <div class="sidebar-footer">
-      <a href="#" @click.prevent="logout">
+      <a href="#" @click.prevent="confirmLogout">
         <i class="fas fa-sign-out-alt"></i>
         <span>Logout</span>
       </a>
@@ -53,20 +53,40 @@
 
 <script>
 import { useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
 
 export default {
   name: 'Sidebar',
   setup() {
     const router = useRouter();
 
-    const logout = () => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      router.push({ name: 'login' });
+    const confirmLogout = () => {
+      Swal.fire({
+        title: 'Tem certeza?',
+        text: "Você está prestes a sair!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sim, sair!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          Swal.fire({
+            icon: 'success',
+            title: 'Logout efetuado com sucesso!',
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
+            router.push({ name: 'login' });
+          });
+        }
+      });
     };
 
     return {
-      logout,
+      confirmLogout,
     };
   },
 };
