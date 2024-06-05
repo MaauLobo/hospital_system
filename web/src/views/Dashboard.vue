@@ -25,13 +25,16 @@
           <div class="chart-title">Total Pacientes</div>
           <canvas id="totalPacientesChart"></canvas>
           <div class="info">
+            <span>{{ infoCards[0].value }}</span>
             <p>Gráfico de total de pacientes por dia</p>
           </div>
-        </div>
+        
+      </div>
         <div class="widget bar-chart">
           <div class="chart-title">Transportes Realizados</div>
           <canvas id="transportesRealizadosChart"></canvas>
           <div class="info">
+            <span>{{ infoCards[2].value }}</span>
             <p>Gráfico de transportes realizados por dia</p>
           </div>
         </div>
@@ -39,6 +42,7 @@
           <div class="chart-title">Solicitações Recusadas</div>
           <canvas id="solicitacoesRecusadasChart"></canvas>
           <div class="info">
+            <span>{{ solicitacoesRecusadas }}</span>
             <p>Gráfico de solicitações recusadas por dia</p>
           </div>
         </div>
@@ -394,6 +398,7 @@ export default {
   font-weight: bold;
   margin-bottom: 10px;
 }
+
 
 .widget h3 {
   font-size: 2em;
