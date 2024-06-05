@@ -109,26 +109,38 @@ const updateTransportRequestStatus = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
-    
-    let description = 'Solicitação de transporte atualizada';
-    if (request_status === 'Aceito') {
-      description = 'Solicitação de transporte aceita';
-    } else if (request_status === 'Negado') {
-      description = 'Solicitação de transporte negada';
-    }
-    else if (request_status === 'Pendente') {
-      description = 'Solicitação de transporte pendente';
-    }
+
+    const description = `Status da solicitação de transporte atualizado para ${request_status}`;
 
     historicoModel.registrarHistorico(id, description, (err) => {
       if (err) {
         console.log("Erro ao registrar no histórico: ", err);
       }
     });
+    return res.status(200).json({ message: 'Status da solicitação de transporte atualizado com sucesso' });
+  });
+};
 
-    return res.status(200).json({ message: 'Status de solicitação de transporte atualizada com sucesso' });
-  })
-}
+const updateTransportStatus = (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  transportRequestModel.updateTransportStatus(id, status, (err) => {
+    if (err) {
+      console.log('Erro ao atualizar status:', err);
+      return res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+
+    const description = `Status atualizado para ${status}`;
+
+    historicoModel.registrarHistorico(id, description, (err) => {
+      if (err) {
+        console.log("Erro ao registrar no histórico: ", err);
+      }
+    });
+    return res.status(200).json({ message: 'Status atualizado com sucesso' });
+  });
+};
 
 
 module.exports = {
@@ -140,4 +152,5 @@ module.exports = {
   deleteTransportRequest,
   updateTransportRequestPriority,
   updateTransportRequestStatus,
+  updateTransportStatus,
 };

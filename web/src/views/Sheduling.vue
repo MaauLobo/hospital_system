@@ -33,18 +33,18 @@
               <p>Paciente: {{ historico.patient_name }}</p>
               <p>Destino: {{ historico.destination_point }}</p>
               <p>Hora: {{ formatDateTime(historico.created_at) }}</p>
-              <p>Status: {{ historico.request_status }}</p>
-              <div class="historico-actions" v-if="historico.request_status !== 'Recusado'">
+              <p>Status: {{ historico.status }}</p>
+              <div class="historico-actions" v-if="historico.request_status !== 'Negado'">
                 <button 
                   @click="updateStatus(historico.id, 'Em Transporte')" 
-                  :disabled="historico.status === 'Em Transporte' || historico.status === 'Chegou ao Destino'"
+                  :disabled="!isEmTransporteEnabled(historico.status)"
                 >
                   <i class="fas fa-truck"></i>
                   <span>Em Transporte</span>
                 </button>
                 <button 
                   @click="updateStatus(historico.id, 'Chegou ao Destino')" 
-                  :disabled="historico.status === 'Chegou ao Destino'"
+                  :disabled="!isChegouAoDestinoEnabled(historico.status)"
                 >
                   <i class="fas fa-check-circle"></i>
                   <span>Concluído</span>
@@ -104,14 +104,10 @@ export default {
     },
     async updateStatus(id, status) {
       try {
-        const updateData = status === 'Chegou ao Destino' ? { status } : { status };
-        await axios.put(`http://localhost:3333/transport-requests/${id}/status`, updateData);
+        await axios.put(`http://localhost:3333/transport-requests/${id}/status`, { status });
         const item = this.historicos.find(h => h.id === id);
         if (item) {
           item.status = status;
-          if (status === 'Chegou ao Destino') {
-            item.request_status = 'Concluído';
-          }
         }
       } catch (error) {
         console.error(`Erro ao atualizar status para ${status}:`, error);
@@ -124,6 +120,12 @@ export default {
         this.historicos.push(solicitacao);
         this.solicitacoes = this.solicitacoes.filter(s => s.id !== id);
       }
+    },
+    isEmTransporteEnabled(status) {
+      return status === 'Aguardando transporte';
+    },
+    isChegouAoDestinoEnabled(status) {
+      return status === 'Em Transporte' || status === 'Chegou ao Destino';
     },
     formatDateTime(dateTime) {
       if (!dateTime) {
