@@ -36,7 +36,7 @@
               <p>Status: {{ historico.status }}</p>
               <div class="historico-actions" v-if="historico.request_status !== 'Negado'">
                 <button 
-                  @click="updateStatus(historico.id, 'Em Transporte')" 
+                  @click="updateStatus(historico.id, 'Em transporte')" 
                   :disabled="!isEmTransporteEnabled(historico.status)"
                 >
                   <i class="fas fa-truck"></i>
@@ -117,6 +117,7 @@ export default {
       const solicitacao = this.solicitacoes.find(s => s.id === id);
       if (solicitacao) {
         solicitacao.request_status = request_status;
+        solicitacao.status = request_status === 'Aceito' ? 'Aguardando transporte' : solicitacao.status;
         this.historicos.push(solicitacao);
         this.solicitacoes = this.solicitacoes.filter(s => s.id !== id);
       }
@@ -125,13 +126,14 @@ export default {
       return status === 'Aguardando transporte';
     },
     isChegouAoDestinoEnabled(status) {
-      return status === 'Em Transporte';
+      return status === 'Em transporte';
     },
     formatDateTime(dateTime) {
       if (!dateTime) {
         return 'Data inválida';
       }
       const date = new Date(dateTime);
+      date.setHours(date.getHours() + 3); 
       const offset = date.getTimezoneOffset() * 60000;
       const localDate = new Date(date.getTime() - offset);
 
