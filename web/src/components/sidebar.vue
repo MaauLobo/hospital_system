@@ -64,7 +64,7 @@ export default {
       Swal.fire({
         title: 'Tem certeza?',
         text: "Você está prestes a sair!",
-        icon: 'warning',
+        icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',

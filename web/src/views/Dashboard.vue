@@ -351,18 +351,34 @@ export default {
         await axios.post('http://localhost:3333/incidents', this.newIncident);
         this.closeIncidentModal();
         Swal.fire({
+          toast: true,
+          position: 'top-right',
           icon: 'success',
           title: 'Incidente salvo com sucesso!',
           showConfirmButton: false,
-          timer: 1500
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
         });
         this.fetchPatients(); // Refresh data after incident creation
       } catch (error) {
         console.error('Erro ao salvar incidente:', error);
         Swal.fire({
+          toast: true,
+          position: 'top-right',
           icon: 'error',
           title: 'Erro ao salvar incidente',
-          text: 'Tente novamente mais tarde.'
+          text: 'Tente novamente mais tarde.',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
         });
       }
     }

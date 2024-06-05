@@ -98,19 +98,35 @@ export default {
         const response = await axios.post('http://localhost:3333/transport-requests', requestData);
         if (response.status === 201) {
           Swal.fire({
+            toast: true,
+            position: 'top-right',
             icon: 'success',
             title: 'Solicitação enviada com sucesso!',
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer);
+              toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
           });
           this.clearForm();
         }
       } catch (error) {
         console.error('Erro ao enviar a solicitação:', error);
         Swal.fire({
+          toast: true,
+          position: 'top-right',
           icon: 'error',
           title: 'Erro ao enviar a solicitação',
-          text: 'Tente novamente mais tarde.'
+          text: 'Tente novamente mais tarde.',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
         });
       }
     },

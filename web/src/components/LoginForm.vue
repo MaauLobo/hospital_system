@@ -49,26 +49,51 @@ export default {
         if (response.data.authenticated) {
           localStorage.setItem('token', response.data.token);
           Swal.fire({
+            toast: true,
+            position: 'top-right',
             icon: 'success',
             title: 'Login efetuado com sucesso!',
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer);
+              toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
           }).then(() => {
             this.$router.push({ name: 'dashboard' });
           });
         } else {
           Swal.fire({
+            toast: true,
+            position: 'top-right',
             icon: 'error',
             title: 'Credenciais inválidas',
-            text: 'Por favor, verifique suas credenciais e tente novamente.'
+            text: 'Por favor, verifique suas credenciais e tente novamente.',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer);
+              toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
           });
         }
       } catch (error) {
         console.error('Erro durante o login:', error);
         Swal.fire({
+          toast: true,
+          position: 'top-right',
           icon: 'error',
           title: 'Erro no servidor',
-          text: 'Tente novamente mais tarde.'
+          text: 'Tente novamente mais tarde.',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
         });
       }
     }
