@@ -35,18 +35,18 @@ const getTransportRequestsByMaqueiroId = (maqueiro_id, callback) => {
 
 const insertTransportRequest = (data, callback) => {
   const query = `
-      INSERT INTO TransportRequests (patient_name, data, initial_point, destination_point, maqueiro_id, priority)
-      VALUES (?, ?, ?, ?, ?, ?)
-  `;
-  const params = [data.patient_name, data.data, data.initial_point, data.destination_point, data.maqueiro_id, data.priority];
+    INSERT INTO TransportRequests (patient_name, data, initial_point, destination_point, maqueiro_id, priority, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+      `;
+  const params = [data.patient_name, data.data, data.initial_point, data.destination_point, data.maqueiro_id, data.priority, data.status];
   db.query(query, params, (err, result) => {
-      if (err) {
-          console.error('Erro ao inserir solicitação de transporte:', err);
-          return callback(err);
-      }
-      return callback(null, result.insertId);
+    if (err) {
+      console.error('Erro ao inserir solicitação de transporte:', err);
+      return callback(err);
+    }
+    return callback(null, result.insertId);
   });
-};
+}; 
 
 const updateTransportRequest = (id, data, callback) => {
   const fields = ['patient_name', 'status', 'priority', 'data', 'initial_point', 'destination_point', 'maqueiro_id'];
