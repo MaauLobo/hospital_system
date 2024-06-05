@@ -22,26 +22,23 @@
       </div>
       <div class="charts">
         <div class="widget bar-chart">
+          <div class="chart-title">Total Pacientes</div>
           <canvas id="totalPacientesChart"></canvas>
           <div class="info">
-            <h3>Total Pacientes</h3>
-            <span>{{ infoCards[0].value }}</span>
             <p>Gráfico de total de pacientes por dia</p>
           </div>
         </div>
         <div class="widget bar-chart">
+          <div class="chart-title">Transportes Realizados</div>
           <canvas id="transportesRealizadosChart"></canvas>
           <div class="info">
-            <h3>Transportes Realizados</h3>
-            <span>{{ infoCards[2].value }}</span>
             <p>Gráfico de transportes realizados por dia</p>
           </div>
         </div>
         <div class="widget line-chart">
+          <div class="chart-title">Solicitações Recusadas</div>
           <canvas id="solicitacoesRecusadasChart"></canvas>
           <div class="info">
-            <h3>Solicitações Recusadas</h3>
-            <span>{{ solicitacoesRecusadas }}</span>
             <p>Gráfico de solicitações recusadas por dia</p>
           </div>
         </div>
@@ -390,6 +387,12 @@ export default {
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
+}
+
+.chart-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .widget h3 {
