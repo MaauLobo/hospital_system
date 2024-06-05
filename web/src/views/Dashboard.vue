@@ -75,6 +75,7 @@
                 <th>Status</th>
                 <th>Localização</th>
                 <th>Urgência</th>
+                <th>Ação</th>
               </tr>
             </thead>
             <tbody>
@@ -83,6 +84,9 @@
                 <td>{{ patient.status }}</td>
                 <td>{{ patient.destination_point }}</td>
                 <td :class="getUrgencyClass(patient.priority)">{{ patient.priority }}</td>
+                <td>
+                  <button class="action-button" @click="openIncidentModal(patient.id)">Gerar Incidente</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -91,6 +95,25 @@
             <button @click="nextPage" :disabled="currentPage === totalPages">Próximo</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal para Gerar Incidente -->
+    <div v-if="showIncidentModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeIncidentModal">&times;</span>
+        <h2>Gerar Incidente</h2>
+        <form @submit.prevent="saveIncident">
+          <div class="form-group">
+            <label for="descricao">Descrição:</label>
+            <textarea id="descricao" v-model="newIncident.descricao"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="dataHora">Data e Hora:</label>
+            <input type="datetime-local" id="dataHora" v-model="newIncident.dataHora" />
+          </div>
+          <button type="submit">Salvar</button>
+        </form>
       </div>
     </div>
   </div>
@@ -128,6 +151,12 @@ export default {
       currentPage: 1,
       itemsPerPage: 13,
       filteredPatients: [],
+      showIncidentModal: false,
+      newIncident: {
+        solicitacaoId: null,
+        descricao: '',
+        dataHora: ''
+      }
     };
   },
   created() {
@@ -304,6 +333,27 @@ export default {
         this.currentPage--;
       }
     },
+    openIncidentModal(solicitacaoId) {
+      this.newIncident.solicitacaoId = solicitacaoId;
+      this.showIncidentModal = true;
+    },
+    closeIncidentModal() {
+      this.showIncidentModal = false;
+      this.newIncident = {
+        solicitacaoId: null,
+        descricao: '',
+        dataHora: ''
+      };
+    },
+    async saveIncident() {
+      try {
+        await axios.post('http://localhost:3333/incidents', this.newIncident);
+        this.closeIncidentModal();
+        this.fetchPatients(); // Refresh data after incident creation
+      } catch (error) {
+        console.error('Erro ao salvar incidente:', error);
+      }
+    }
   },
 };
 </script>
@@ -403,7 +453,6 @@ export default {
   font-weight: bold;
   margin-bottom: 10px;
 }
-
 
 .widget h3 {
   font-size: 2em;
@@ -516,5 +565,91 @@ export default {
 .urgency-critical {
   color: red;
   text-shadow: 1px 1px 0 #000;
+}
+
+/* Modal estilos */
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 50%;
+  max-width: 500px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.modal .close {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+
+.form-group textarea {
+  height: 100px;
+}
+
+button[type="submit"] {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #218838;
+}
+
+.action-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.action-button:hover {
+  background-color: #0056b3;
 }
 </style>
