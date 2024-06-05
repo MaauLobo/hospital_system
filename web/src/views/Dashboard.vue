@@ -195,7 +195,7 @@ export default {
 
       this.renderChart('totalPacientesChart', days, totalPacientesData, 'Total Pacientes');
       this.renderChart('transportesRealizadosChart', days, transportesRealizadosData, 'Transportes Realizados');
-      this.renderChart('solicitacoesRecusadasChart', days, solicitacoesRecusadasData, 'Solicitações Recusadas');
+      this.renderLineChart('solicitacoesRecusadasChart', days, solicitacoesRecusadasData, 'Solicitações Recusadas');
     },
     renderChart(canvasId, labels, data, label) {
       const ctx = document.getElementById(canvasId).getContext('2d');
@@ -208,6 +208,32 @@ export default {
             data: data,
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
             borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+          }],
+        },
+        options: {
+          plugins: {
+            legend: { display: false },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+    },
+    renderLineChart(canvasId, labels, data, label) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: label,
+            data: data,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 1,
           }],
         },

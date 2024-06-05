@@ -154,8 +154,8 @@ export default {
 
 .agendamento-container {
   display: flex;
-  min-height: 100vh;
   background-color: #f0f2f5;
+  height: 100vh;
 }
 
 .agendamento-view {
@@ -165,6 +165,7 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   margin: 20px;
+  overflow-y: auto
 }
 
 h1 {
