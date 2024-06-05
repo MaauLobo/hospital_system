@@ -125,6 +125,7 @@ import Sidebar from '@/components/sidebar.vue';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import eventBus from '@/eventBus.js';
+import Swal from 'sweetalert2';
 
 Chart.register(...registerables);
 
@@ -349,9 +350,20 @@ export default {
       try {
         await axios.post('http://localhost:3333/incidents', this.newIncident);
         this.closeIncidentModal();
+        Swal.fire({
+          icon: 'success',
+          title: 'Incidente salvo com sucesso!',
+          showConfirmButton: false,
+          timer: 1500
+        });
         this.fetchPatients(); // Refresh data after incident creation
       } catch (error) {
         console.error('Erro ao salvar incidente:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro ao salvar incidente',
+          text: 'Tente novamente mais tarde.'
+        });
       }
     }
   },
