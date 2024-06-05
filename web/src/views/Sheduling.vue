@@ -125,7 +125,7 @@ export default {
       return status === 'Aguardando transporte';
     },
     isChegouAoDestinoEnabled(status) {
-      return status === 'Em Transporte' || status === 'Chegou ao Destino';
+      return status === 'Em Transporte';
     },
     formatDateTime(dateTime) {
       if (!dateTime) {
