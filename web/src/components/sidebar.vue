@@ -24,12 +24,6 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/tracking">
-          <i class="fas fa-compass"></i>
-          <span>Rastreamento</span>
-        </router-link>
-      </li>
-      <li>
         <a href="#">
           <i class="fas fa-chart-line"></i>
           <span>Relatórios</span>
