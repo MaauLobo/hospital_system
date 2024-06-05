@@ -28,8 +28,7 @@
             <span>{{ infoCards[0].value }}</span>
             <p>Gráfico de total de pacientes por dia</p>
           </div>
-        
-      </div>
+        </div>
         <div class="widget bar-chart">
           <div class="chart-title">Transportes Realizados</div>
           <canvas id="transportesRealizadosChart"></canvas>
@@ -102,6 +101,7 @@ import { Chart, registerables } from 'chart.js';
 import Sidebar from '@/components/sidebar.vue';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import eventBus from '@/eventBus.js';
 
 Chart.register(...registerables);
 
@@ -140,6 +140,11 @@ export default {
       console.log('Nenhum token encontrado no localStorage');
     }
     this.fetchPatients();
+
+    // Ouvir evento do Event Bus
+    this.$watch(() => eventBus.updated, () => {
+      this.fetchPatients();
+    });
   },
   computed: {
     paginatedPatients() {

@@ -61,6 +61,7 @@
 <script>
 import axios from 'axios';
 import Sidebar from '@/components/sidebar.vue';
+import eventBus from '@/eventBus.js';
 
 export default {
   name: 'AgendamentoView',
@@ -90,6 +91,7 @@ export default {
       try {
         await axios.put(`http://localhost:3333/transport-requests/${id}/request-status`, { request_status: 'Aceito' });
         this.updateLocalRequestStatus(id, 'Aceito');
+        eventBus.updated = !eventBus.updated; // Emitir evento
       } catch (error) {
         console.error('Erro ao aceitar solicitação:', error);
       }
@@ -98,6 +100,7 @@ export default {
       try {
         await axios.put(`http://localhost:3333/transport-requests/${id}/request-status`, { request_status: 'Negado' });
         this.updateLocalRequestStatus(id, 'Negado');
+        eventBus.updated = !eventBus.updated; // Emitir evento
       } catch (error) {
         console.error('Erro ao recusar solicitação:', error);
       }
@@ -108,6 +111,7 @@ export default {
         const item = this.historicos.find(h => h.id === id);
         if (item) {
           item.status = status;
+          eventBus.updated = !eventBus.updated; // Emitir evento
         }
       } catch (error) {
         console.error(`Erro ao atualizar status para ${status}:`, error);
