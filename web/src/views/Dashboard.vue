@@ -627,7 +627,7 @@ export default {
 }
 
 button[type="submit"] {
-  background-color: #28a745;
+  background-color: #007bff;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -636,7 +636,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-  background-color: #218838;
+  background-color: #0056b3;
 }
 
 .action-button {
