@@ -22,23 +22,28 @@
       </div>
       <div class="charts">
         <div class="widget bar-chart">
-          <canvas id="dataAChart"></canvas>
+          <canvas id="totalPacientesChart"></canvas>
           <div class="info">
-            <h3>A</h3>
-            <span>68209</span>
-            <p>Lorem ipsum dolor</p>
+            <h3>Total Pacientes</h3>
+            <span>{{ infoCards[0].value }}</span>
+            <p>Gráfico de total de pacientes por dia</p>
           </div>
         </div>
         <div class="widget bar-chart">
-          <canvas id="dataBChart"></canvas>
+          <canvas id="transportesRealizadosChart"></canvas>
           <div class="info">
-            <h3>B</h3>
-            <span>27393</span>
-            <p>Lorem ipsum dolor</p>
+            <h3>Transportes Realizados</h3>
+            <span>{{ infoCards[2].value }}</span>
+            <p>Gráfico de transportes realizados por dia</p>
           </div>
         </div>
         <div class="widget line-chart">
-          <canvas id="overviewChart"></canvas>
+          <canvas id="solicitacoesRecusadasChart"></canvas>
+          <div class="info">
+            <h3>Solicitações Recusadas</h3>
+            <span>{{ solicitacoesRecusadas }}</span>
+            <p>Gráfico de solicitações recusadas por dia</p>
+          </div>
         </div>
       </div>
       <div class="patient-list-widget">
@@ -74,10 +79,10 @@
             </thead>
             <tbody>
               <tr v-for="patient in paginatedPatients" :key="patient.id">
-                <td>{{ patient.name }}</td>
+                <td>{{ patient.patient_name }}</td>
                 <td>{{ patient.status }}</td>
-                <td>{{ patient.location }}</td>
-                <td :class="getUrgencyClass(patient.urgency)">{{ patient.urgency }}</td>
+                <td>{{ patient.destination_point }}</td>
+                <td :class="getUrgencyClass(patient.priority)">{{ patient.priority }}</td>
               </tr>
             </tbody>
           </table>
@@ -95,6 +100,7 @@
 import { Chart, registerables } from 'chart.js';
 import Sidebar from '@/components/sidebar.vue';
 import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
 
 Chart.register(...registerables);
 
@@ -107,28 +113,13 @@ export default {
     return {
       name: '',
       infoCards: [
-        { value: '89', label: 'Total Pacientes', icon: 'fas fa-user', color: '#28a745' },
-        { value: '17', label: 'Pacientes Urgentes', icon: 'fas fa-exclamation-circle', color: '#dc3545' },
-        { value: '55', label: 'Transportes Realizados', icon: 'fas fa-bed', color: '#6f42c1' },
-        { value: '40', label: 'Aguardando Transporte', icon: 'fas fa-clock', color: '#007bff' },
+        { value: 0, label: 'Total Pacientes', icon: 'fas fa-user', color: '#28a745' },
+        { value: 0, label: 'Pacientes Urgentes', icon: 'fas fa-exclamation-circle', color: '#dc3545' },
+        { value: 0, label: 'Transportes Realizados', icon: 'fas fa-bed', color: '#6f42c1' },
+        { value: 0, label: 'Aguardando Transporte', icon: 'fas fa-clock', color: '#007bff' },
       ],
-      patients: [
-        { id: 1, name: 'João Silva', status: 'Aguardando transporte', location: 'Setor A', urgency: 'Emergência Absoluta' },
-        { id: 2, name: 'Maria Oliveira', status: 'Em transporte', location: 'Setor B', urgency: 'Muito Urgente' },
-        { id: 3, name: 'Ana Santos', status: 'Chegou ao destino', location: 'Setor C', urgency: 'Urgente' },
-        { id: 4, name: 'Carlos Mendes', status: 'Aguardando transporte', location: 'Setor D', urgency: 'Pouco Urgente' },
-        { id: 5, name: 'Laura Lima', status: 'Em transporte', location: 'Setor E', urgency: 'Não Urgente' },
-        { id: 6, name: 'Rafael Souza', status: 'Chegou ao destino', location: 'Setor F', urgency: 'Pouco Urgente' },
-        { id: 7, name: 'Beatriz Fernandes', status: 'Aguardando transporte', location: 'Setor G', urgency: 'Emergência Absoluta' },
-        { id: 8, name: 'Gustavo Alves', status: 'Em transporte', location: 'Setor H', urgency: 'Muito Urgente' },
-        { id: 9, name: 'Fernanda Costa', status: 'Chegou ao destino', location: 'Setor I', urgency: 'Urgente' },
-        { id: 10, name: 'Pedro Rocha', status: 'Aguardando transporte', location: 'Setor J', urgency: 'Pouco Urgente' },
-        { id: 11, name: 'Mariana Pereira', status: 'Em transporte', location: 'Setor K', urgency: 'Não Urgente' },
-        { id: 12, name: 'Lucas Martins', status: 'Chegou ao destino', location: 'Setor L', urgency: 'Pouco Urgente' },
-        { id: 13, name: 'Aline Silva', status: 'Aguardando transporte', location: 'Setor M', urgency: 'Emergência Absoluta' },
-        { id: 14, name: 'New Patient', status: 'Aguardando transporte', location: 'Setor N', urgency: 'Urgente' }, // Exemplo de paciente adicional
-        // Adicione mais pacientes conforme necessário
-      ],
+      solicitacoesRecusadas: 0,
+      patients: [],
       searchName: '',
       searchLocation: '',
       selectedUrgency: '',
@@ -139,15 +130,16 @@ export default {
     };
   },
   created() {
-      const token = localStorage.getItem('token');
-      if (token) {
-        const decodedToken = jwtDecode(token);
-        this.name = decodedToken.name;
-        this.role = decodedToken.role;
-      } else {
-        console.log('Nenhum token encontrado no localStorage');
-      }
-    },
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      this.name = decodedToken.name || 'Usuário';
+      this.role = decodedToken.role || 'Desconhecido';
+    } else {
+      console.log('Nenhum token encontrado no localStorage');
+    }
+    this.fetchPatients();
+  },
   computed: {
     paginatedPatients() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
@@ -159,48 +151,63 @@ export default {
     },
   },
   mounted() {
-    this.renderBarChart('dataAChart', [12, 19, 3, 5, 2]);
-    this.renderBarChart('dataBChart', [2, 3, 20, 5, 1]);
-    this.renderLineChart('overviewChart', [3, 2, 1, 5, 4]);
-    this.filterPatients();
+    this.fetchPatients();
   },
   methods: {
+    async fetchPatients() {
+      try {
+        const response = await axios.get('http://localhost:3333/transport-requests');
+        this.patients = response.data;
+        this.updateInfoCards();
+        this.updateCharts();
+        this.filterPatients();
+      } catch (error) {
+        console.error('Erro ao buscar pacientes:', error);
+      }
+    },
+    updateInfoCards() {
+      const totalPacientes = this.patients.length;
+      const pacientesUrgentes = this.patients.filter(patient => ['Urgente', 'Muito Urgente', 'Emergência Absoluta'].includes(patient.priority)).length;
+      const transportesRealizados = this.patients.filter(patient => patient.status === 'Chegou ao destino').length;
+      const aguardandoTransporte = this.patients.filter(patient => patient.status === 'Aguardando transporte').length;
+      const solicitacoesRecusadas = this.patients.filter(patient => patient.request_status === 'Negado').length;
 
-    renderBarChart(canvasId, data) {
+      this.infoCards[0].value = totalPacientes;
+      this.infoCards[1].value = pacientesUrgentes;
+      this.infoCards[2].value = transportesRealizados;
+      this.infoCards[3].value = aguardandoTransporte;
+      this.solicitacoesRecusadas = solicitacoesRecusadas;
+    },
+    updateCharts() {
+      const days = Array.from(new Set(this.patients.map(patient => new Date(patient.created_at).toLocaleDateString()))).sort();
+
+      const totalPacientesData = days.map(day => {
+        return this.patients.filter(patient => new Date(patient.created_at).toLocaleDateString() === day).length;
+      });
+
+      const transportesRealizadosData = days.map(day => {
+        return this.patients.filter(patient => new Date(patient.created_at).toLocaleDateString() === day && patient.status === 'Chegou ao destino').length;
+      });
+
+      const solicitacoesRecusadasData = days.map(day => {
+        return this.patients.filter(patient => new Date(patient.created_at).toLocaleDateString() === day && patient.request_status === 'Negado').length;
+      });
+
+      this.renderChart('totalPacientesChart', days, totalPacientesData, 'Total Pacientes');
+      this.renderChart('transportesRealizadosChart', days, transportesRealizadosData, 'Transportes Realizados');
+      this.renderChart('solicitacoesRecusadasChart', days, solicitacoesRecusadasData, 'Solicitações Recusadas');
+    },
+    renderChart(canvasId, labels, data, label) {
       const ctx = document.getElementById(canvasId).getContext('2d');
       new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+          labels: labels,
           datasets: [{
-            data,
+            label: label,
+            data: data,
             backgroundColor: 'rgba(54, 162, 235, 0.2)',
             borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1,
-          }],
-        },
-        options: {
-          plugins: {
-            legend: { display: false },
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
-      });
-    },
-    renderLineChart(canvasId, data) {
-      const ctx = document.getElementById(canvasId).getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-          datasets: [{
-            data,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 1,
           }],
         },
@@ -236,17 +243,17 @@ export default {
       this.filteredPatients = this.patients
         .filter(patient => {
           return (
-            (!this.selectedUrgency || patient.urgency === this.selectedUrgency || this.selectedUrgency === "Maior Urgência") &&
+            (!this.selectedUrgency || patient.priority === this.selectedUrgency || this.selectedUrgency === "Maior Urgência") &&
             (!this.selectedStatus || patient.status === this.selectedStatus) &&
-            (!this.searchName || patient.name.toLowerCase().includes(this.searchName.toLowerCase())) &&
-            (!this.searchLocation || patient.location.toLowerCase().includes(this.searchLocation.toLowerCase()))
+            (!this.searchName || patient.patient_name.toLowerCase().includes(this.searchName.toLowerCase())) &&
+            (!this.searchLocation || patient.destination_point.toLowerCase().includes(this.searchLocation.toLowerCase()))
           );
         })
         .sort((a, b) => {
           if (this.selectedUrgency === "Maior Urgência") {
-            return this.compareUrgency(b.urgency, a.urgency);
+            return this.compareUrgency(b.priority, a.priority);
           } else {
-            return this.compareUrgency(a.urgency, b.urgency);
+            return this.compareUrgency(a.priority, b.priority);
           }
         });
       this.currentPage = 1; // Reset to first page after filtering
@@ -410,7 +417,7 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.patient-list-widget h2{
+.patient-list-widget h2 {
   text-align: left;
 }
 
