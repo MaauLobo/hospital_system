@@ -23,6 +23,7 @@
 
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default {
   name: 'LoginForm',
@@ -47,13 +48,28 @@ export default {
 
         if (response.data.authenticated) {
           localStorage.setItem('token', response.data.token);
-          this.$router.push({ name: 'dashboard' });
+          Swal.fire({
+            icon: 'success',
+            title: 'Login efetuado com sucesso!',
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
+            this.$router.push({ name: 'dashboard' });
+          });
         } else {
-          alert('Credenciais inválidas');
+          Swal.fire({
+            icon: 'error',
+            title: 'Credenciais inválidas',
+            text: 'Por favor, verifique suas credenciais e tente novamente.'
+          });
         }
       } catch (error) {
         console.error('Erro durante o login:', error);
-        alert('Erro no servidor. Tente novamente mais tarde.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro no servidor',
+          text: 'Tente novamente mais tarde.'
+        });
       }
     }
   }
