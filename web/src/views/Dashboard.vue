@@ -67,6 +67,7 @@
               <option value="Em transporte">Em transporte</option>
               <option value="Chegou ao destino">Chegou ao destino</option>
             </select>
+            <button class="history-button" @click="openIncidentHistoryModal">Histórico de Incidentes</button>
           </div>
           <table>
             <thead>
@@ -116,6 +117,7 @@
         </form>
       </div>
     </div>
+    <HistoricIncident :show="showIncidentHistoryModal" @close="showIncidentHistoryModal = false" />
   </div>
 </template>
 
@@ -126,6 +128,7 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import eventBus from '@/eventBus.js';
 import Swal from 'sweetalert2';
+import HistoricIncident from '@/components/HistoricIncident.vue';
 
 Chart.register(...registerables);
 
@@ -133,10 +136,12 @@ export default {
   name: 'Dashboard',
   components: {
     Sidebar,
+    HistoricIncident,
   },
   data() {
     return {
       name: '',
+      showIncidentHistoryModal: false,
       infoCards: [
         { value: 0, label: 'Total Pacientes', icon: 'fas fa-user', color: '#28a745' },
         { value: 0, label: 'Pacientes Urgentes', icon: 'fas fa-exclamation-circle', color: '#dc3545' },
@@ -190,6 +195,11 @@ export default {
     this.fetchPatients();
   },
   methods: {
+
+    openIncidentHistoryModal() {
+      this.showIncidentHistoryModal = true;
+    },
+
     async fetchPatients() {
       try {
         const response = await axios.get('http://localhost:3333/transport-requests');
@@ -516,6 +526,7 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+
 .filters select,
 .filters input {
   padding: 10px;
@@ -678,6 +689,21 @@ button[type="submit"]:hover {
 }
 
 .action-button:hover {
+  background-color: #0056b3;
+}
+
+.history-button {
+  padding: 10px 20px;
+  font-size: 1em;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.history-button:hover {
   background-color: #0056b3;
 }
 </style>
