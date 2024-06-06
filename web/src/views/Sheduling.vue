@@ -13,11 +13,11 @@
               <p>Hora: {{ formatDateTime(solicitacao.created_at) }}</p>
             </div>
             <div class="solicitacao-actions">
-              <button @click="aceitarSolicitacao(solicitacao.id)">
+              <button @click="confirmarAceitarSolicitacao(solicitacao.id)">
                 <i class="fas fa-check"></i>
                 <span>Aceitar</span>
               </button>
-              <button @click="recusarSolicitacao(solicitacao.id)">
+              <button @click="confirmarRecusarSolicitacao(solicitacao.id)">
                 <i class="fas fa-times"></i>
                 <span>Recusar</span>
               </button>
@@ -62,6 +62,7 @@
 import axios from 'axios';
 import Sidebar from '@/components/sidebar.vue';
 import eventBus from '@/eventBus.js';
+import Swal from 'sweetalert2';
 
 export default {
   name: 'AgendamentoView',
@@ -87,11 +88,50 @@ export default {
         console.error('Erro ao buscar solicitações:', error);
       }
     },
+    confirmarAceitarSolicitacao(id) {
+      Swal.fire({
+        title: 'Tem certeza que deseja aceitar a solicitação?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sim, aceitar',
+        cancelButtonText: 'Não, cancelar'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          this.aceitarSolicitacao(id);
+        }
+      });
+    },
+    confirmarRecusarSolicitacao(id) {
+      Swal.fire({
+        title: 'Tem certeza que deseja recusar a solicitação?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sim, recusar',
+        cancelButtonText: 'Não, cancelar'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          this.recusarSolicitacao(id);
+        }
+      });
+    },
     async aceitarSolicitacao(id) {
       try {
         await axios.put(`http://localhost:3333/transport-requests/${id}/request-status`, { request_status: 'Aceito' });
         this.updateLocalRequestStatus(id, 'Aceito');
         eventBus.updated = !eventBus.updated; // Emitir evento
+        Swal.fire({
+          toast: true,
+          position: 'top-right',
+          icon: 'success',
+          title: 'Solicitação Aceita',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
+        });
       } catch (error) {
         console.error('Erro ao aceitar solicitação:', error);
       }
@@ -101,6 +141,19 @@ export default {
         await axios.put(`http://localhost:3333/transport-requests/${id}/request-status`, { request_status: 'Negado' });
         this.updateLocalRequestStatus(id, 'Negado');
         eventBus.updated = !eventBus.updated; // Emitir evento
+        Swal.fire({
+          toast: true,
+          position: 'top-right',
+          icon: 'success',
+          title: 'Solicitação Recusada',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
+        });
       } catch (error) {
         console.error('Erro ao recusar solicitação:', error);
       }
