@@ -8,6 +8,7 @@
           <span>{{ name }}</span>
           <i class="fas fa-user-circle" @click="toggleUserOptionsModal"></i>
           <UserOptionsModal :show="showUserOptionsModal" @navigate="handleNavigation" />
+          <RegisterUser :show="showRegisterUserModal" @close="closeRegisterUserModal" />
         </div>
       </div>
       <div class="overview">
@@ -130,7 +131,8 @@ import axios from 'axios';
 import eventBus from '@/eventBus.js';
 import Swal from 'sweetalert2';
 import HistoricIncident from '@/components/HistoricIncident.vue';
-import UserOptionsModal from '@/components/UserOptionsModal.vue'; // Import the new component
+import UserOptionsModal from '@/components/UserOptionsModal.vue';
+import RegisterUser from '@/components/RegisterUser.vue';
 
 Chart.register(...registerables);
 
@@ -139,13 +141,15 @@ export default {
   components: {
     Sidebar,
     HistoricIncident,
-    UserOptionsModal // Register the new component
+    UserOptionsModal,
+    RegisterUser
   },
   data() {
     return {
       name: '',
       showIncidentHistoryModal: false,
-      showUserOptionsModal: false, // State to control the user options modal visibility
+      showUserOptionsModal: false,
+      showRegisterUserModal: false,
       infoCards: [
         { value: 0, label: 'Total Pacientes', icon: 'fas fa-user', color: '#28a745' },
         { value: 0, label: 'Pacientes Urgentes', icon: 'fas fa-exclamation-circle', color: '#dc3545' },
@@ -205,15 +209,17 @@ export default {
     handleNavigation(page) {
       this.showUserOptionsModal = false;
       if (page === 'register') {
-        // Navegar para a página de cadastro de usuário
+        this.showRegisterUserModal = true;
       } else if (page === 'list') {
-        // Navegar para a página de listagem de usuários
+        // Aqui você pode adicionar o código para exibir a lista de usuários
       }
+    },
+    closeRegisterUserModal() {
+      this.showRegisterUserModal = false;
     },
     openIncidentHistoryModal() {
       this.showIncidentHistoryModal = true;
     },
-
     async fetchPatients() {
       try {
         const response = await axios.get('http://localhost:3333/transport-requests');
@@ -455,7 +461,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  position: relative; /* Add relative positioning */
 }
 
 .header h1 {
@@ -465,14 +470,11 @@ export default {
 .header .user-info {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .header .user-info span {
   margin-right: 10px;
-}
-
-.user-info i{
-  cursor: pointer;
 }
 
 .overview {
@@ -654,7 +656,7 @@ export default {
 .modal {
   display: flex;
   justify-content: center;
-  align-items: center;
+ 	align-items: center;
   position: fixed;
   z-index: 1000;
   left: 0;
