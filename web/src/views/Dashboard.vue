@@ -6,7 +6,8 @@
         <h1>Dashboard User</h1>
         <div class="user-info">
           <span>{{ name }}</span>
-          <i class="fas fa-user-circle"></i>
+          <i class="fas fa-user-circle" @click="toggleUserOptionsModal"></i>
+          <UserOptionsModal :show="showUserOptionsModal" @navigate="handleNavigation" />
         </div>
       </div>
       <div class="overview">
@@ -129,6 +130,7 @@ import axios from 'axios';
 import eventBus from '@/eventBus.js';
 import Swal from 'sweetalert2';
 import HistoricIncident from '@/components/HistoricIncident.vue';
+import UserOptionsModal from '@/components/UserOptionsModal.vue'; // Import the new component
 
 Chart.register(...registerables);
 
@@ -137,11 +139,13 @@ export default {
   components: {
     Sidebar,
     HistoricIncident,
+    UserOptionsModal // Register the new component
   },
   data() {
     return {
       name: '',
       showIncidentHistoryModal: false,
+      showUserOptionsModal: false, // State to control the user options modal visibility
       infoCards: [
         { value: 0, label: 'Total Pacientes', icon: 'fas fa-user', color: '#28a745' },
         { value: 0, label: 'Pacientes Urgentes', icon: 'fas fa-exclamation-circle', color: '#dc3545' },
@@ -195,7 +199,17 @@ export default {
     this.fetchPatients();
   },
   methods: {
-
+    toggleUserOptionsModal() {
+      this.showUserOptionsModal = !this.showUserOptionsModal;
+    },
+    handleNavigation(page) {
+      this.showUserOptionsModal = false;
+      if (page === 'register') {
+        // Navegar para a página de cadastro de usuário
+      } else if (page === 'list') {
+        // Navegar para a página de listagem de usuários
+      }
+    },
     openIncidentHistoryModal() {
       this.showIncidentHistoryModal = true;
     },
@@ -421,7 +435,6 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .dashboard-container {
   display: flex;
@@ -442,6 +455,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  position: relative; /* Add relative positioning */
 }
 
 .header h1 {
@@ -455,6 +469,10 @@ export default {
 
 .header .user-info span {
   margin-right: 10px;
+}
+
+.user-info i{
+  cursor: pointer;
 }
 
 .overview {
