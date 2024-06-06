@@ -235,13 +235,13 @@ export default {
         return this.patients.filter(patient => new Date(patient.created_at).toLocaleDateString() === day && patient.status === 'Chegou ao destino').length;
       });
 
-      const solicitacoesRecusadasData = days.map(day => {
-        return this.patients.filter(patient => new Date(patient.created_at).toLocaleDateString() === day && patient.request_status === 'Negado').length;
+      const solicitacoesRecusadasData = this.generateConsecutiveDaysData(10).map(day => {
+        return this.patients.filter(patient => new Date(patient.created_at).getDate() === day && patient.request_status === 'Negado').length;
       });
 
       this.renderChart('totalPacientesChart', days, totalPacientesData, 'Total Pacientes');
       this.renderChart('transportesRealizadosChart', days, transportesRealizadosData, 'Transportes Realizados');
-      this.renderLineChart('solicitacoesRecusadasChart', days, solicitacoesRecusadasData, 'Solicitações Recusadas');
+      this.renderLineChart('solicitacoesRecusadasChart', this.generateConsecutiveDaysLabels(10), solicitacoesRecusadasData, 'Solicitações Recusadas');
     },
     renderChart(canvasId, labels, data, label) {
       const ctx = document.getElementById(canvasId).getContext('2d');
@@ -290,10 +290,35 @@ export default {
           scales: {
             y: {
               beginAtZero: true,
+              min: 1, // Mínimo valor para eixo Y
+              max: 15, // Máximo valor para eixo Y
+              ticks: {
+                stepSize: 1 // Incremento de 1 unidade
+              }
             },
           },
         },
       });
+    },
+    generateConsecutiveDaysLabels(numDays) {
+      const labels = [];
+      const today = new Date();
+      for (let i = 0; i < numDays; i++) {
+        const day = new Date(today);
+        day.setDate(today.getDate() - i);
+        labels.unshift(day.getDate().toString().padStart(2, '0'));
+      }
+      return labels;
+    },
+    generateConsecutiveDaysData(numDays) {
+      const data = [];
+      const today = new Date();
+      for (let i = 0; i < numDays; i++) {
+        const day = new Date(today);
+        day.setDate(today.getDate() - i);
+        data.unshift(day.getDate());
+      }
+      return data;
     },
     getUrgencyClass(urgency) {
       switch (urgency) {
@@ -395,6 +420,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .dashboard-container {
