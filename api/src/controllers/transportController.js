@@ -1,6 +1,5 @@
 const transportRequestModel = require('../models/transportModel');
 const historicoModel = require('../models/historicModel');
-const incidentModel = require('../models/IncidentModel');
 
 const getAllTransportRequests = (req, res) => {
   transportRequestModel.getAllTransportRequests((err, requests) => {
@@ -40,17 +39,17 @@ const getTransportRequestsByMaqueiroId = (req, res) => {
 const createTransportRequest = (req, res) => {
   const data = req.body;
   transportRequestModel.insertTransportRequest(data, (err, insertId) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-    const description = 'Solicitação de transporte criada';
-
-    historicoModel.registrarHistorico(insertId, description, (err) => {
       if (err) {
-        console.log("Erro ao registrar no histórico: ", err);
+          return res.status(500).json({ message: 'Erro interno do servidor' });
       }
-    });
-    return res.status(201).json({ message: 'Solicitação de transporte criada com sucesso', id: insertId });
+      const description = 'Solicitação de transporte criada';
+
+      historicoModel.registrarHistorico(insertId, description, (err) => {
+          if (err) {
+              console.log("Erro ao registrar no histórico: ", err);
+          }
+      });
+      return res.status(201).json({ message: 'Solicitação de transporte criada com sucesso', id: insertId });
   });
 };
 
@@ -72,33 +71,14 @@ const updateTransportRequest = (req, res) => {
   });
 };
 
-const deleteTransportRequest = async (req, res) => {
+const deleteTransportRequest = (req, res) => {
   const { id } = req.params;
-
-  try {
-    await new Promise((resolve, reject) => {
-      incidentModel.deleteIncidentsBySolicitacaoId(id, (err) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve();
-      });
-    });
-
-    await new Promise((resolve, reject) => {
-      transportRequestModel.deleteTransportRequest(id, (err) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve();
-      });
-    });
-
-    res.status(200).json({ message: 'Solicitação de transporte deletada com sucesso' });
-  } catch (err) {
-    console.error('Erro ao deletar solicitação de transporte:', err);
-    res.status(500).json({ message: 'Erro interno do servidor' });
-  }
+  transportRequestModel.deleteTransportRequest(id, (err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+    return res.status(200).json({ message: 'Solicitação de transporte deletada com sucesso' });
+  });
 };
 
 const updateTransportRequestPriority = (req, res) => {
@@ -129,26 +109,17 @@ const updateTransportRequestStatus = (req, res) => {
     if (err) {
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
-    
-    let description = 'Solicitação de transporte atualizada';
-    if (request_status === 'Aceito') {
-      description = 'Solicitação de transporte aceita';
-    } else if (request_status === 'Negado') {
-      description = 'Solicitação de transporte negada';
-    }
-    else if (request_status === 'Pendente') {
-      description = 'Solicitação de transporte pendente';
-    }
+
+    const description = `Status da solicitação de transporte atualizado para ${request_status}`;
 
     historicoModel.registrarHistorico(id, description, (err) => {
       if (err) {
         console.log("Erro ao registrar no histórico: ", err);
       }
     });
-
-    return res.status(200).json({ message: 'Status de solicitação de transporte atualizada com sucesso' });
-  })
-}
+    return res.status(200).json({ message: 'Status da solicitação de transporte atualizado com sucesso' });
+  });
+};
 
 const updateTransportStatus = (req, res) => {
   const { id } = req.params;
@@ -156,18 +127,18 @@ const updateTransportStatus = (req, res) => {
 
   transportRequestModel.updateTransportStatus(id, status, (err) => {
     if (err) {
+      console.log('Erro ao atualizar status:', err);
       return res.status(500).json({ message: 'Erro interno do servidor' });
     }
 
-    const description = `Status de transporte atualizado para ${status}`;
+    const description = `Status atualizado para ${status}`;
 
     historicoModel.registrarHistorico(id, description, (err) => {
       if (err) {
-        console.log("Erro ao registrar no histórico:", err);
+        console.log("Erro ao registrar no histórico: ", err);
       }
     });
-
-    return res.status(200).json({ message: 'Status de transporte atualizado com sucesso' });
+    return res.status(200).json({ message: 'Status atualizado com sucesso' });
   });
 };
 
