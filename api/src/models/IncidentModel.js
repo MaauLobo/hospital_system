@@ -1,5 +1,13 @@
 const { db } = require('./db');
 
+
+const adjustIncidentTimes = (incidents) => {
+  return incidents.map(incident => {
+    incident.dataHora = moment(incident.dataHora).subtract(3, 'hours').format('YYYY-MM-DD HH:mm:ss');
+    return incident;
+  });
+};
+
 const getAllIncidents = (callback) => {
   const query = `
     SELECT Incident.*, 
@@ -17,7 +25,8 @@ const getAllIncidents = (callback) => {
       console.error('Erro ao consultar todos os incidentes:', err);
       return callback(err, null);
     }
-    return callback(null, results);
+    const adjustedResults = adjustIncidentTimes(results);
+    return callback(null, adjustedResults);
   });
 };
 
@@ -61,7 +70,31 @@ const getIncidentsByMaqueiroId = (maqueiro_id, callback) => {
       console.error('Erro ao consultar incidentes por ID do maqueiro:', err);
       return callback(err, null);
     }
-    return callback(null, results);
+    const adjustedResults = adjustIncidentTimes(results);
+    return callback(null, adjustedResults);
+  });
+};
+
+const getIncidentsBySolicitacaoId = (solicitacaoId, callback) => {
+  const query = `
+    SELECT Incident.*, 
+           TransportRequests.patient_name, 
+           TransportRequests.initial_point, 
+           TransportRequests.destination_point,
+           TransportRequests.maqueiro_id,
+           Users.name AS maqueiro_name
+    FROM Incident
+    JOIN TransportRequests ON Incident.solicitacaoId = TransportRequests.id
+    JOIN Users ON TransportRequests.maqueiro_id = Users.id
+    WHERE Incident.solicitacaoId = ?
+  `;
+  db.query(query, [solicitacaoId], (err, results) => {
+    if (err) {
+      console.error('Erro ao consultar incidentes por ID da solicitação:', err);
+      return callback(err, null);
+    }
+    const adjustedResults = adjustIncidentTimes(results);
+    return callback(null, adjustedResults);
   });
 };
 
@@ -107,11 +140,24 @@ const deleteIncident = (id, callback) => {
   });
 };
 
+const deleteIncidentsBySolicitacaoId = (solicitacaoId, callback) => {
+  const query = 'DELETE FROM Incident WHERE solicitacaoId = ?';
+  db.query(query, [solicitacaoId], (err) => {
+    if (err) {
+      console.error('Erro ao deletar incidentes por ID da solicitação:', err);
+      return callback(err);
+    }
+    return callback(null);
+  });
+};
+
 module.exports = {
   getAllIncidents,
   getIncidentById,
   getIncidentsByMaqueiroId,
+  getIncidentsBySolicitacaoId,
   createIncident,
   updateIncident,
   deleteIncident,
+  deleteIncidentsBySolicitacaoId,
 };

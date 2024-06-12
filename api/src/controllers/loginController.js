@@ -24,12 +24,14 @@ const fazerLogin = (req, res) => {
     }
 
     if (Array.isArray(userData) && userData.length === 1) {
-      const { id, username, name } = userData[0];
+      const { id, username, name, perms, role } = userData[0];
 
       const userInfo = {
         userid: id,
         user: username,
         name: name,
+        perms: perms,
+        role: role
       };
 
       const token = jwt.sign(userInfo, secretKey, { expiresIn: '5h' });

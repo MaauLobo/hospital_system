@@ -22,6 +22,29 @@ const getIncidentById = (req, res) => {
   });
 };
 
+const getIncidentsByMaqueiroId = (req, res) => {
+  const { maqueiro_id } = req.params;
+  incidentModel.getIncidentsByMaqueiroId(maqueiro_id, (err, incidents) => {
+    if (err) {
+      return res.status(500).json({ message: 'Erro interno do servidor' });
+    }
+    if (!incidents || incidents.length === 0) {
+      return res.status(404).json({ message: 'Nenhum incidente encontrado para o maqueiro especificado' });
+    }
+    return res.status(200).json(incidents);
+  });
+};
+
+const getIncidentsBySolicitacaoId = (req, res) => {
+  const solicitacaoId = req.params.solicitacaoId;
+  incidentModel.getIncidentsBySolicitacaoId(solicitacaoId, (err, incidents) => {
+    if (err) {
+      return res.status(500).json({ error: 'Erro ao consultar incidentes por ID da solicitação' });
+    }
+    return res.json(incidents);
+  });
+};
+
 const createIncident = (req, res) => {
   const data = req.body;
   incidentModel.createIncident(data, (err, insertId) => {
@@ -56,6 +79,8 @@ const deleteIncident = (req, res) => {
 module.exports = {
   getAllIncidents,
   getIncidentById,
+  getIncidentsByMaqueiroId,
+  getIncidentsBySolicitacaoId,
   createIncident,
   updateIncident,
   deleteIncident,
