@@ -1,11 +1,10 @@
-// controllers/TransportRequestController.js
-
 const TransportModel = require('../models/transportModel');
-const historicoModel = require('../models/historicModel');
+const HistoricModel = require('../models/historicModel');
 
 class TransportRequestController {
   constructor() {
     this.transportModel = new TransportModel();
+    this.historicModel = new HistoricModel();
   }
 
   async getAllTransportRequests(req, res) {
@@ -51,7 +50,7 @@ class TransportRequestController {
       }
       const description = 'Solicitação de transporte criada';
 
-      historicoModel.registrarHistorico(insertId, description, (err) => {
+      this.historicModel.registrarHistorico(insertId, description, (err) => {
         if (err) {
           console.log("Erro ao registrar no histórico: ", err);
         }
@@ -69,7 +68,7 @@ class TransportRequestController {
       }
       const description = 'Solicitação de transporte atualizada';
 
-      historicoModel.registrarHistorico(id, description, (err) => {
+      this.historicModel.registrarHistorico(id, description, (err) => {
         if (err) {
           console.log("Erro ao registrar no histórico: ", err);
         }
@@ -99,7 +98,7 @@ class TransportRequestController {
 
       const description = `Solicitação de transporte priorizada como ${priority}`;
 
-      historicoModel.registrarHistorico(id, description, (err) => {
+      this.historicModel.registrarHistorico(id, description, (err) => {
         if (err) {
           console.log("Erro ao registrar no histórico: ", err);
         }
@@ -119,7 +118,7 @@ class TransportRequestController {
 
       const description = `Status da solicitação de transporte atualizado para ${request_status}`;
 
-      historicoModel.registrarHistorico(id, description, (err) => {
+      this.historicModel.registrarHistorico(id, description, (err) => {
         if (err) {
           console.log("Erro ao registrar no histórico: ", err);
         }
@@ -140,7 +139,7 @@ class TransportRequestController {
 
       const description = `Status atualizado para ${status}`;
 
-      historicoModel.registrarHistorico(id, description, (err) => {
+      this.historicModel.registrarHistorico(id, description, (err) => {
         if (err) {
           console.log("Erro ao registrar no histórico: ", err);
         }
