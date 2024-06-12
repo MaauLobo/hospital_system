@@ -473,10 +473,6 @@ export default {
   position: relative;
 }
 
-.user-info i{
-  cursor: pointer;
-}
-
 .header .user-info span {
   margin-right: 10px;
 }
