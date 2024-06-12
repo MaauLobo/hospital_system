@@ -179,6 +179,7 @@ export default {
       const decodedToken = jwtDecode(token);
       this.name = decodedToken.name || 'Usuário';
       this.role = decodedToken.role || 'Desconhecido';
+      this.perms = decodedToken.perms 
     } else {
       console.log('Nenhum token encontrado no localStorage');
     }

@@ -1,47 +1,50 @@
 const jwt = require('jsonwebtoken');
-const loginModel = require('../models/loginModel');
+const LoginModel = require('../models/LoginModel'); // Corrigido para importar a classe LoginModel
 
 const secretKey = 'secret_key';
 
-const cadastrarUsuario = (req, res) => {
-  const { name, username, password } = req.body;
+class LoginController {
+  constructor() {
+    this.loginModel = new LoginModel(); // Instanciando a classe LoginModel
+  }
 
-  loginModel.insertUser(name, username, password, (err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
+  async cadastrarUsuario(req, res) {
+    const { name, username, password } = req.body;
 
-    return res.status(201).json({ message: 'Usuário cadastrado com sucesso' });
-  });
-};
+    this.loginModel.insertUser(name, username, password, (err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
 
-const fazerLogin = (req, res) => {
-  const { username, password } = req.body;
+      return res.status(201).json({ message: 'Usuário cadastrado com sucesso' });
+    });
+  }
 
-  loginModel.getUserByUsernameAndPassword(username, password, (err, userData) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
+  async fazerLogin(req, res) {
+    const { username, password } = req.body;
 
-    if (Array.isArray(userData) && userData.length === 1) {
-      const { id, username, name } = userData[0];
+    this.loginModel.getUserByUsernameAndPassword(username, password, (err, userData) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
 
-      const userInfo = {
-        userid: id,
-        user: username,
-        name: name,
-      };
+      if (Array.isArray(userData) && userData.length === 1) {
+        const { id, username, name } = userData[0];
 
-      const token = jwt.sign(userInfo, secretKey, { expiresIn: '5h' });
+        const userInfo = {
+          userid: id,
+          user: username,
+          name: name,
+        };
 
-      return res.status(200).json({ authenticated: true, token });
-    } else {
-      return res.status(401).json({ authenticated: false, message: 'Credenciais inválidas' });
-    }
-  });
-};
+        const token = jwt.sign(userInfo, secretKey, { expiresIn: '5h' });
 
-module.exports = {
-  fazerLogin,
-  cadastrarUsuario,
-};
+        return res.status(200).json({ authenticated: true, token });
+      } else {
+        return res.status(401).json({ authenticated: false, message: 'Credenciais inválidas' });
+      }
+    });
+  }
+}
+
+module.exports = LoginController;

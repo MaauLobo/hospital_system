@@ -1,156 +1,153 @@
-const transportRequestModel = require('../models/transportModel');
+// controllers/TransportRequestController.js
+
+const TransportModel = require('../models/transportModel');
 const historicoModel = require('../models/historicModel');
 
-const getAllTransportRequests = (req, res) => {
-  transportRequestModel.getAllTransportRequests((err, requests) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-    return res.status(200).json(requests);
-  });
-};
+class TransportRequestController {
+  constructor() {
+    this.transportModel = new TransportModel();
+  }
 
-const getTransportRequestById = (req, res) => {
-  const { id } = req.params;
-  transportRequestModel.getTransportRequestById(id, (err, request) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-    if (!request) {
-      return res.status(404).json({ message: 'Solicitação de transporte não encontrada' });
-    }
-    return res.status(200).json(request);
-  });
-};
-
-const getTransportRequestsByMaqueiroId = (req, res) => {
-  const { maqueiro_id } = req.params;
-  transportRequestModel.getTransportRequestsByMaqueiroId(maqueiro_id, (err, requests) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-    if (!requests || requests.length === 0) {
-      return res.status(404).json({ message: 'Nenhuma solicitação de transporte encontrada para o maqueiro especificado' });
-    }
-    return res.status(200).json(requests);
-  });
-};
-
-const createTransportRequest = (req, res) => {
-  const data = req.body;
-  transportRequestModel.insertTransportRequest(data, (err, insertId) => {
+  async getAllTransportRequests(req, res) {
+    this.transportModel.getAllTransportRequests((err, requests) => {
       if (err) {
-          return res.status(500).json({ message: 'Erro interno do servidor' });
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+      return res.status(200).json(requests);
+    });
+  }
+
+  async getTransportRequestById(req, res) {
+    const { id } = req.params;
+    this.transportModel.getTransportRequestById(id, (err, request) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+      if (!request) {
+        return res.status(404).json({ message: 'Solicitação de transporte não encontrada' });
+      }
+      return res.status(200).json(request);
+    });
+  }
+
+  async getTransportRequestsByMaqueiroId(req, res) {
+    const { maqueiro_id } = req.params;
+    this.transportModel.getTransportRequestsByMaqueiroId(maqueiro_id, (err, requests) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+      if (!requests || requests.length === 0) {
+        return res.status(404).json({ message: 'Nenhuma solicitação de transporte encontrada para o maqueiro especificado' });
+      }
+      return res.status(200).json(requests);
+    });
+  }
+
+  async createTransportRequest(req, res) {
+    const data = req.body;
+    this.transportModel.insertTransportRequest(data, (err, insertId) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
       }
       const description = 'Solicitação de transporte criada';
 
       historicoModel.registrarHistorico(insertId, description, (err) => {
-          if (err) {
-              console.log("Erro ao registrar no histórico: ", err);
-          }
+        if (err) {
+          console.log("Erro ao registrar no histórico: ", err);
+        }
       });
       return res.status(201).json({ message: 'Solicitação de transporte criada com sucesso', id: insertId });
-  });
-};
-
-const updateTransportRequest = (req, res) => {
-  const { id } = req.params;
-  const data = req.body;
-  transportRequestModel.updateTransportRequest(id, data, (err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-    const description = 'Solicitação de transporte atualizada';
-
-    historicoModel.registrarHistorico(id, description, (err) => {
-      if (err) {
-        console.log("Erro ao registrar no histórico: ", err);
-      }
     });
-    return res.status(200).json({ message: 'Solicitação de transporte atualizada com sucesso' });
-  });
-};
+  }
 
-const deleteTransportRequest = (req, res) => {
-  const { id } = req.params;
-  transportRequestModel.deleteTransportRequest(id, (err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-    return res.status(200).json({ message: 'Solicitação de transporte deletada com sucesso' });
-  });
-};
-
-const updateTransportRequestPriority = (req, res) => {
-  const { id } = req.params;
-  const { priority } = req.body;
-
-  transportRequestModel.updateTransportRequestPriority(id, priority, (err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-
-    const description = `Solicitação de transporte priorizada como ${priority}`;
-
-    historicoModel.registrarHistorico(id, description, (err) => {
+  async updateTransportRequest(req, res) {
+    const { id } = req.params;
+    const data = req.body;
+    this.transportModel.updateTransportRequest(id, data, (err) => {
       if (err) {
-        console.log("Erro ao registrar no histórico: ", err);
+        return res.status(500).json({ message: 'Erro interno do servidor' });
       }
+      const description = 'Solicitação de transporte atualizada';
+
+      historicoModel.registrarHistorico(id, description, (err) => {
+        if (err) {
+          console.log("Erro ao registrar no histórico: ", err);
+        }
+      });
+      return res.status(200).json({ message: 'Solicitação de transporte atualizada com sucesso' });
     });
-    return res.status(200).json({ message: 'Prioridade da solicitação de transporte atualizada com sucesso' });
-  });
-};
+  }
 
-const updateTransportRequestStatus = (req, res) => {
-  const { id } = req.params;
-  const { request_status } = req.body;
-
-  transportRequestModel.updateTransportRequestStatus(id, request_status, (err) => {
-    if (err) {
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-
-    const description = `Status da solicitação de transporte atualizado para ${request_status}`;
-
-    historicoModel.registrarHistorico(id, description, (err) => {
+  async deleteTransportRequest(req, res) {
+    const { id } = req.params;
+    this.transportModel.deleteTransportRequest(id, (err) => {
       if (err) {
-        console.log("Erro ao registrar no histórico: ", err);
+        return res.status(500).json({ message: 'Erro interno do servidor' });
       }
+      return res.status(200).json({ message: 'Solicitação de transporte deletada com sucesso' });
     });
-    return res.status(200).json({ message: 'Status da solicitação de transporte atualizado com sucesso' });
-  });
-};
+  }
 
-const updateTransportStatus = (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
+  async updateTransportRequestPriority(req, res) {
+    const { id } = req.params;
+    const { priority } = req.body;
 
-  transportRequestModel.updateTransportStatus(id, status, (err) => {
-    if (err) {
-      console.log('Erro ao atualizar status:', err);
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
-
-    const description = `Status atualizado para ${status}`;
-
-    historicoModel.registrarHistorico(id, description, (err) => {
+    this.transportModel.updateTransportRequestPriority(id, priority, (err) => {
       if (err) {
-        console.log("Erro ao registrar no histórico: ", err);
+        return res.status(500).json({ message: 'Erro interno do servidor' });
       }
+
+      const description = `Solicitação de transporte priorizada como ${priority}`;
+
+      historicoModel.registrarHistorico(id, description, (err) => {
+        if (err) {
+          console.log("Erro ao registrar no histórico: ", err);
+        }
+      });
+      return res.status(200).json({ message: 'Prioridade da solicitação de transporte atualizada com sucesso' });
     });
-    return res.status(200).json({ message: 'Status atualizado com sucesso' });
-  });
-};
+  }
 
+  async updateTransportRequestStatus(req, res) {
+    const { id } = req.params;
+    const { request_status } = req.body;
 
-module.exports = {
-  getAllTransportRequests,
-  getTransportRequestById,
-  getTransportRequestsByMaqueiroId,
-  createTransportRequest,
-  updateTransportRequest,
-  deleteTransportRequest,
-  updateTransportRequestPriority,
-  updateTransportRequestStatus,
-  updateTransportStatus,
-};
+    this.transportModel.updateTransportRequestStatus(id, request_status, (err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+
+      const description = `Status da solicitação de transporte atualizado para ${request_status}`;
+
+      historicoModel.registrarHistorico(id, description, (err) => {
+        if (err) {
+          console.log("Erro ao registrar no histórico: ", err);
+        }
+      });
+      return res.status(200).json({ message: 'Status da solicitação de transporte atualizado com sucesso' });
+    });
+  }
+
+  async updateTransportStatus(req, res) {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    this.transportModel.updateTransportStatus(id, status, (err) => {
+      if (err) {
+        console.log('Erro ao atualizar status:', err);
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+
+      const description = `Status atualizado para ${status}`;
+
+      historicoModel.registrarHistorico(id, description, (err) => {
+        if (err) {
+          console.log("Erro ao registrar no histórico: ", err);
+        }
+      });
+      return res.status(200).json({ message: 'Status atualizado com sucesso' });
+    });
+  }
+}
+
+module.exports = TransportRequestController;

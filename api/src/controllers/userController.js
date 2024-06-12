@@ -1,16 +1,22 @@
-const userModel = require('../models/userModel');
+// controllers/UserController.js
 
-const getAllUsers = (req, res) => {
-  userModel.getAllUsers((err, result) => {
-    if (err) {
-      console.error('Erro ao obter todos os usuários:', err);
-      return res.status(500).json({ message: 'Erro interno do servidor' });
-    }
+const UserModel = require('../models/userModel');
 
-    return res.status(200).json(result);
-  });
-};
+class UserController {
+  constructor() {
+    this.userModel = new UserModel();
+  }
 
-module.exports = {
-  getAllUsers,
-};
+  async getAllUsers(req, res) {
+    this.userModel.getAllUsers((err, result) => {
+      if (err) {
+        console.error('Erro ao obter todos os usuários:', err);
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+
+      return res.status(200).json(result);
+    });
+  }
+}
+
+module.exports = UserController;
