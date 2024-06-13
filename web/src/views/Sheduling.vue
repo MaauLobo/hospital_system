@@ -94,7 +94,7 @@ export default {
     },
     async fetchSolicitacoes() {
   try {
-    const response = await axios.get('http://localhost:3333/transport-requests');
+    const response = await axios.get('https://api-hospital-8shg.onrender.com/transport-requests');
     console.log('Fetched solicitacoes:', response.data);
 
     this.solicitacoes = response.data.filter(
@@ -139,7 +139,7 @@ export default {
     },
     async aceitarSolicitacao(id) {
       try {
-        await axios.put(`http://localhost:3333/transport-requests/${id}/request-status`, { request_status: 'Aceito', maqueiro_id: this.userId });
+        await axios.put(`https://api-hospital-8shg.onrender.com/transport-requests/${id}/request-status`, { request_status: 'Aceito', maqueiro_id: this.userId });
         this.updateLocalRequestStatus(id, 'Aceito');
         eventBus.updated = !eventBus.updated; // Emitir evento
         Swal.fire({
@@ -161,7 +161,7 @@ export default {
     },
     async recusarSolicitacao(id) {
       try {
-        await axios.put(`http://localhost:3333/transport-requests/${id}/reject`, { maqueiro_id: this.userId });
+        await axios.put(`https://api-hospital-8shg.onrender.com/transport-requests/${id}/reject`, { maqueiro_id: this.userId });
         this.updateLocalRequestStatus(id, 'Negado');
         eventBus.updated = !eventBus.updated; // Emitir evento
         Swal.fire({
@@ -183,7 +183,7 @@ export default {
     },
     async updateStatus(id, status) {
       try {
-        await axios.put(`http://localhost:3333/transport-requests/${id}/status`, { status });
+        await axios.put(`https://api-hospital-8shg.onrender.com/transport-requests/${id}/status`, { status });
         const item = this.historicos.find(h => h.id === id);
         if (item) {
           item.status = status;

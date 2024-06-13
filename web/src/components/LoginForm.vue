@@ -42,7 +42,7 @@ export default {
     async handleLogin() {
       try {
         console.log(`Tentando login com username: ${this.username} e password: ${this.password}`);
-        const response = await axios.post('http://localhost:3333/login', {
+        const response = await axios.post('https://api-hospital-8shg.onrender.com/login', {
           username: this.username,
           password: this.password
         });

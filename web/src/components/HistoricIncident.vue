@@ -68,7 +68,7 @@ export default {
   methods: {
     async fetchIncidents() {
       try {
-        const response = await axios.get('http://localhost:3333/incidents');
+        const response = await axios.get('https://api-hospital-8shg.onrender.com/incidents');
         let incidentsData = response.data;
 
         // Filtrar incidentes com base no role e perms

@@ -64,7 +64,7 @@ export default {
     },
     async registerUser() {
       try {
-        await axios.post('http://localhost:3333/register', this.form);
+        await axios.post('https://api-hospital-8shg.onrender.com/register', this.form);
         Swal.fire({
           toast: true,
           position: 'top-right',

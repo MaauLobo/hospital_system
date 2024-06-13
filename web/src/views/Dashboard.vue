@@ -239,7 +239,7 @@ export default {
     },
     async fetchPatients() {
       try {
-        const response = await axios.get('http://localhost:3333/transport-requests');
+        const response = await axios.get('https://api-hospital-8shg.onrender.com/transport-requests');
         let patientsData = response.data;
 
         // Filtrar pacientes com base no role e perms
@@ -427,7 +427,7 @@ export default {
     },
     async saveIncident() {
       try {
-        await axios.post('http://localhost:3333/incidents', this.newIncident);
+        await axios.post('https://api-hospital-8shg.onrender.com/incidents', this.newIncident);
         this.closeIncidentModal();
         Swal.fire({
           toast: true,

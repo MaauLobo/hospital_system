@@ -76,7 +76,7 @@
     methods: {
       async fetchUsers() {
         try {
-          const response = await axios.get('http://localhost:3333/users');
+          const response = await axios.get('https://api-hospital-8shg.onrender.com/users');
           this.users = response.data;
         } catch (error) {
           console.error('Erro ao buscar usuários:', error);
@@ -90,7 +90,7 @@
       },
       async updateUser() {
         try {
-          await axios.put(`http://localhost:3333/users/${this.editingUser.id}`, this.editingUser);
+          await axios.put(`https://api-hospital-8shg.onrender.com/users/${this.editingUser.id}`, this.editingUser);
           Swal.fire({
             toast: true,
             position: 'top-right',
@@ -133,7 +133,7 @@
       },
       async deleteUser(userId) {
         try {
-          await axios.delete(`http://localhost:3333/users/${userId}`);
+          await axios.delete(`https://api-hospital-8shg.onrender.com/users/${userId}`);
           Swal.fire({
             toast: true,
             position: 'top-right',

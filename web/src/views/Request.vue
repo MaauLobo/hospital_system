@@ -49,13 +49,13 @@
             <input type="text" id="endPoint" v-model="endPoint" required />
           </div>
         </div>
-        <div class="input-group">
+        <!-- <div class="input-group">
           <label for="date">Data:</label>
           <div class="input-icon">
             <i class="fas fa-calendar-alt"></i>
             <input type="text" id="date" v-model="date" disabled />
           </div>
-        </div>
+        </div> -->
         <button type="submit">Enviar Solicitação</button>
       </form>
       <div v-if="error" class="error-message">
@@ -98,7 +98,7 @@ export default {
       };
 
       try {
-        const response = await axios.post('http://localhost:3333/transport-requests', requestData);
+        const response = await axios.post('https://api-hospital-8shg.onrender.com/transport-requests', requestData);
         if (response.status === 201) {
           Swal.fire({
             toast: true,
