@@ -1,10 +1,12 @@
 const TransportModel = require('../models/transportModel');
 const HistoricModel = require('../models/historicModel');
+const UserModel = require('../models/userModel');
 
 class TransportRequestController {
   constructor() {
     this.transportModel = new TransportModel();
     this.historicModel = new HistoricModel();
+    this.userModel = new UserModel();
   }
 
   async getAllTransportRequests(req, res) {
@@ -147,6 +149,16 @@ class TransportRequestController {
       return res.status(200).json({ message: 'Status atualizado com sucesso' });
     });
   }
+
+  async getMaqueiros(req, res) {
+    this.userModel.getMaqueiros((err, users) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+      return res.status(200).json(users);
+    });
+  }
+
 }
 
 module.exports = TransportRequestController;

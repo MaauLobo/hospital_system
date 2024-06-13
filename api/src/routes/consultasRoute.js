@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const LoginController = require('../controllers/loginController');
-const UserController = require('../controllers/UserController');
+const UserController = require('../controllers/userController');
 const TransportRequestController = require('../controllers/transportController');
 const HistoricController = require('../controllers/historicController');
 const IncidentController = require('../controllers/IncidentController');
@@ -19,6 +19,7 @@ router.post('/register', (req, res) => loginController.cadastrarUsuario(req, res
 
 // Rotas de Usuários
 router.get('/users', (req, res) => userController.getAllUsers(req, res));
+router.get('/maqueiros', (req, res) => transportRequestController.getMaqueiros(req, res));
 
 // Rotas de Solicitações de Transporte
 router.get('/transport-requests', (req, res) => transportRequestController.getAllTransportRequests(req, res));
