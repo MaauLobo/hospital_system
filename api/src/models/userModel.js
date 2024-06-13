@@ -11,6 +11,16 @@ class UserModel {
     });
   }
 
+  getMaqueiros(callback) {
+    const getMaqueirosQuery = `SELECT * FROM Users WHERE role = 'Maqueiro'`;
+    db.query(getMaqueirosQuery, (err, result) => {
+      if (err) {
+        return callback(err, null);
+      }
+      return callback(null, result);
+    });
+  }
+
   updateUser(userId, userData, callback) {
     const updateUserQuery = `
       UPDATE Users 

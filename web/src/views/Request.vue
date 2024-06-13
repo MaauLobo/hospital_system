@@ -53,7 +53,7 @@
           <label for="maqueiro">Maqueiro:</label>
           <div class="input-icon">
             <i class="fas fa-user-nurse"></i>
-            <select id="maqueiro" v-model="maqueiroId" required>
+            <select id="maqueiro" v-model="maqueiroId">
               <option v-for="maqueiro in maqueiros" :key="maqueiro.id" :value="maqueiro.id">{{ maqueiro.name }}</option>
             </select>
           </div>
@@ -67,6 +67,9 @@
         </div>
         <button type="submit">Enviar Solicitação</button>
       </form>
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
     </div>
   </div>
 </template>
@@ -90,16 +93,18 @@ export default {
       endPoint: '',
       maqueiros: [],
       maqueiroId: '',
-      date: new Date().toLocaleString()
+      date: new Date().toLocaleString(),
+      error: ''
     };
   },
   methods: {
     async fetchMaqueiros() {
       try {
         const response = await axios.get('http://localhost:3333/maqueiros');
-        this.maqueiros = response.data;
+        this.maqueiros = response.data.filter(user => user.role === 'Maqueiro');
       } catch (error) {
         console.error('Erro ao buscar maqueiros:', error);
+        this.error = 'Erro ao buscar maqueiros. Tente novamente mais tarde.';
       }
     },
     async submitRequest() {
@@ -245,6 +250,13 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
 }
 
 @media (max-width: 768px) {
