@@ -50,9 +50,7 @@
         </div>
       </div>
       <div class="patient-list-widget">
-        <h2>Rastreamento de Pacientes</h2>
-        <div class="patient-list">
-          <div class="filters">
+        <div class="filters">
             <input type="text" v-model="searchName" @input="filterPatients" placeholder="Buscar por nome" />
             <input type="text" v-model="searchLocation" @input="filterPatients" placeholder="Buscar por setor" />
             <select v-model="selectedUrgency" @change="filterPatients">
@@ -72,6 +70,8 @@
             </select>
             <button class="history-button" @click="openIncidentHistoryModal">Histórico de Incidentes</button>
           </div>
+        <h2>Rastreamento de Pacientes</h2>
+        <div class="patient-list">
           <table>
             <thead>
               <tr>
@@ -599,6 +599,7 @@ export default {
   background: white;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .filters select,
