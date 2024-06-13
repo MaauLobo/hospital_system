@@ -34,6 +34,7 @@
 
 <script>
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   name: 'HistoricIncident',
@@ -48,7 +49,10 @@ export default {
       incidents: [],
       searchPatient: '',
       searchMaqueiro: '',
-      searchDate: ''
+      searchDate: '',
+      role: '',
+      perms: '',
+      userId: null,
     };
   },
   computed: {
@@ -65,7 +69,14 @@ export default {
     async fetchIncidents() {
       try {
         const response = await axios.get('http://localhost:3333/incidents');
-        this.incidents = response.data;
+        let incidentsData = response.data;
+
+        // Filtrar incidentes com base no role e perms
+        if (this.role === 'Maqueiro' && this.perms === 'User') {
+          incidentsData = incidentsData.filter(incident => incident.maqueiro_id === this.userId);
+        }
+
+        this.incidents = incidentsData;
       } catch (error) {
         console.error('Erro ao buscar histórico de incidentes:', error);
       }
@@ -86,6 +97,20 @@ export default {
   watch: {
     show(newVal) {
       if (newVal) {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          this.role = decodedToken.role;
+          this.perms = decodedToken.perms;
+          this.userId = decodedToken.userid;
+
+          console.log(this.role);
+          console.log(this.perms);
+          console.log(this.userId);
+        } else {
+          console.log('Nenhum token encontrado no localStorage');
+        }
+
         this.fetchIncidents();
       }
     }
@@ -155,7 +180,6 @@ tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-
 .filters {
   display: flex;
   justify-content: flex-start;
@@ -166,7 +190,6 @@ tbody tr:nth-child(even) {
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 
 .filters select,
 .filters input {

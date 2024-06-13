@@ -6,9 +6,9 @@
         <h1>Dashboard User</h1>
         <div class="user-info">
           <span>{{ name }}</span>
-          <i class="fas fa-user-circle" @click="toggleUserOptionsModal"></i>
-          <UserOptionsModal :show="showUserOptionsModal" @navigate="handleNavigation" />
-          <RegisterUser :show="showRegisterUserModal" @close="closeRegisterUserModal" />
+          <i class="fas fa-user-circle" v-if="isAdmin" @click="toggleUserOptionsModal"></i>
+          <UserOptionsModal v-if="isAdmin" :show="showUserOptionsModal" @navigate="handleNavigation" />
+          <RegisterUser v-if="isAdmin" :show="showRegisterUserModal" @close="closeRegisterUserModal" />
         </div>
       </div>
       <div class="overview">
@@ -179,16 +179,13 @@ export default {
       const decodedToken = jwtDecode(token);
       this.name = decodedToken.name || 'Usuário';
       this.role = decodedToken.role || 'Desconhecido';
-      this.perms = decodedToken.perms 
-      this.id = decodedToken.userid 
-      
+      this.perms = decodedToken.perms;
+      this.id = decodedToken.userid;
 
-
-      console.log(this.name)
-      console.log(this.role)
-      console.log(this.perms)
-      console.log(this.id)
-    
+      console.log(this.name);
+      console.log(this.role);
+      console.log(this.perms);
+      console.log(this.id);
     } else {
       console.log('Nenhum token encontrado no localStorage');
     }
@@ -200,6 +197,9 @@ export default {
     });
   },
   computed: {
+    isAdmin() {
+      return this.role === 'Admin' && this.perms === 'Admin';
+    },
     paginatedPatients() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
@@ -233,7 +233,14 @@ export default {
     async fetchPatients() {
       try {
         const response = await axios.get('http://localhost:3333/transport-requests');
-        this.patients = response.data;
+        let patientsData = response.data;
+
+        // Filtrar pacientes com base no role e perms
+        if (this.role === 'Maqueiro' && this.perms === 'User') {
+          patientsData = patientsData.filter(patient => patient.maqueiro_id === this.id);
+        }
+
+        this.patients = patientsData;
         this.updateInfoCards();
         this.updateCharts();
         this.filterPatients();
@@ -283,7 +290,7 @@ export default {
             label: label,
             data: data,
             backgroundColor: 'rgba(30, 144, 255, 0.7)', // Azul vivo
-          borderColor: 'rgba(30, 144, 255, 1)', // Azul vivo
+            borderColor: 'rgba(30, 144, 255, 1)', // Azul vivo
             borderWidth: 1,
           }],
         },
@@ -309,7 +316,7 @@ export default {
             label: label,
             data: data,
             backgroundColor: 'rgba(30, 144, 255, 1)', // Azul vivo
-          borderColor: 'rgba(30, 144, 255, 1)', // Azul vivo
+            borderColor: 'rgba(30, 144, 255, 1)', // Azul vivo
             borderWidth: 1,
           }],
         },
@@ -666,7 +673,7 @@ export default {
 .modal {
   display: flex;
   justify-content: center;
- 	align-items: center;
+  align-items: center;
   position: fixed;
   z-index: 1000;
   left: 0;
