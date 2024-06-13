@@ -227,7 +227,9 @@
   
   .actions {
     display: flex;
-    gap: 10px; /* Aumente o gap entre os botões */
+    gap: 50px; /* Aumente o gap entre os botões */
+    align-items: center;
+    justify-content: center;
   }
   
   .edit-button {
