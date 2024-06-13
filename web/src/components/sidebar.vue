@@ -23,18 +23,18 @@
           <span>Agendamentos</span>
         </router-link>
       </li>
-      <li>
+      <!-- <li>
         <a href="#">
           <i class="fas fa-chart-line"></i>
           <span>Relatórios</span>
         </a>
-      </li>
-      <li>
+      </li> -->
+      <!-- <li>
         <a href="#">
           <i class="fas fa-cog"></i>
           <span>Configurações</span>
         </a>
-      </li>
+      </li> -->
     </ul>
     <div class="sidebar-footer">
       <a href="#" @click.prevent="confirmLogout">
