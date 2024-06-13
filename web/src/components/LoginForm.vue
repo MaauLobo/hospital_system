@@ -1,5 +1,6 @@
 <template>
   <div class="login-form">
+    <img src="@/assets/logo-prosel1.png" alt="Logo do Sistema" class="logo" />
     <h2>LOGIN</h2>
     <form @submit.prevent="handleLogin">
       <div class="input-group">
@@ -108,6 +109,12 @@ export default {
   align-items: center;
   padding: 40px;
   text-align: center;
+}
+
+.logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 10px;
 }
 
 h2 {

@@ -1,8 +1,8 @@
 <template>
     <div class="welcome-section">
       <img src="@/assets/doctors-animate.svg" alt="Doctors Illustration" />
-      <h2>Olá, Doutor!</h2>
-      <p>Administre e gerencie suas demandas e chamados com mais agilidade e eficiencia.</p>
+      <h2>Bem Vindo ao Prosel !</h2>
+      <p>Sistema de Macas  projetado para revolucionar a maneira como as demandas e chamados são administrados e gerenciados em ambientes hospitalares.</p>
     </div>
   </template>
   
