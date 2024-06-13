@@ -180,6 +180,15 @@ export default {
       this.name = decodedToken.name || 'Usuário';
       this.role = decodedToken.role || 'Desconhecido';
       this.perms = decodedToken.perms 
+      this.id = decodedToken.userid 
+      
+
+
+      console.log(this.name)
+      console.log(this.role)
+      console.log(this.perms)
+      console.log(this.id)
+    
     } else {
       console.log('Nenhum token encontrado no localStorage');
     }

@@ -11,7 +11,7 @@
           <span>Dashboard</span>
         </router-link>
       </li>
-      <li>
+      <li v-if="showRequests">
         <router-link to="/request">
           <i class="fas fa-bell"></i>
           <span>Solicitações</span>
@@ -48,11 +48,27 @@
 <script>
 import { useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
+import { jwtDecode } from 'jwt-decode';
+import { ref, computed } from 'vue';
 
 export default {
   name: 'Sidebar',
   setup() {
     const router = useRouter();
+
+    const role = ref('');
+    const perms = ref('');
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      role.value = decodedToken.role || 'Desconhecido';
+      perms.value = decodedToken.perms || '';
+    }
+
+    const showRequests = computed(() => {
+      return !(perms.value === 'User' && role.value === 'Maqueiro');
+    });
 
     const confirmLogout = () => {
       Swal.fire({
@@ -81,6 +97,7 @@ export default {
 
     return {
       confirmLogout,
+      showRequests,
     };
   },
 };
