@@ -290,7 +290,7 @@ export default {
     renderChart(canvasId, labels, data, label) {
       const ctx = document.getElementById(canvasId).getContext('2d');
       new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
           labels: labels,
           datasets: [{
