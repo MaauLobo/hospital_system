@@ -1,51 +1,57 @@
 <template>
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <img src="@/assets/logo-prosel1.png" alt="Prosel Logo" class="logo">
-      <h2>Prosel</h2>
-    </div>
-    <ul class="sidebar-menu">
-      <li>
-        <router-link to="/dashboard">
-          <i class="fas fa-tachometer-alt"></i>
-          <span>Dashboard</span>
-        </router-link>
-      </li>
-      <li v-if="showRequests">
-        <router-link to="/request">
-          <i class="fas fa-bell"></i>
-          <span>Solicitações</span>
-        </router-link>
-      </li>
-      <li>
-        <router-link to="/sheduling">
-          <i class="fas fa-calendar-alt"></i>
-          <span>Agendamentos</span>
-        </router-link>
-      </li>
-    </ul>
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-detail">
-          <i class="fas fa-user"></i>
-          <span>{{ name }}</span>
-        </div>
-        <div class="role-detail">
-          <i class="fas fa-id-badge"></i>
-          <span>{{ role }}</span>
-        </div>
+  <div>
+    <button class="toggle-button" @click="toggleSidebar">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div :class="['sidebar', { 'sidebar-open': isSidebarOpen }]">
+      <div class="sidebar-header">
+        <img src="@/assets/logo-prosel1.png" alt="Prosel Logo" class="logo">
+        <h2>Prosel</h2>
       </div>
-      <a href="#" @click.prevent="confirmLogout">
-        <i class="fas fa-sign-out-alt"></i>
-      </a>
+      <ul class="sidebar-menu">
+        <li>
+          <router-link to="/dashboard" @click.native="closeSidebarOnMobile">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </router-link>
+        </li>
+        <li v-if="showRequests">
+          <router-link to="/request" @click.native="closeSidebarOnMobile">
+            <i class="fas fa-bell"></i>
+            <span>Solicitações</span>
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/sheduling" @click.native="closeSidebarOnMobile">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Agendamentos</span>
+          </router-link>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-detail">
+            <i class="fas fa-user"></i>
+            <span>{{ name }}</span>
+          </div>
+          <div class="role-detail">
+            <i class="fas fa-id-badge"></i>
+            <span>{{ role }}</span>
+          </div>
+        </div>
+        <a href="#" @click.prevent="confirmLogout">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+      </div>
     </div>
   </div>
 </template>
 
+
 <script>
 import { useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { ref, computed } from 'vue';
 
 export default {
@@ -94,18 +100,48 @@ export default {
       });
     };
 
+    const isSidebarOpen = ref(false);
+
+    const toggleSidebar = () => {
+      isSidebarOpen.value = !isSidebarOpen.value;
+    };
+
+    const closeSidebarOnMobile = () => {
+      if (window.innerWidth <= 768) {
+        isSidebarOpen.value = false;
+      }
+    };
+
     return {
       confirmLogout,
       showRequests,
       name,
-      role
+      role,
+      isSidebarOpen,
+      toggleSidebar,
+      closeSidebarOnMobile
     };
   }
 };
 </script>
 
+
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+.toggle-button {
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #4385A8;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1001;
+}
 
 .sidebar {
   width: 70px;
@@ -116,9 +152,12 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   transition: width 0.3s ease;
+  z-index: 1000;
+  position: relative;
 }
 
-.sidebar:hover {
+.sidebar:hover,
+.sidebar.sidebar-open {
   width: 250px;
 }
 
@@ -142,7 +181,8 @@ export default {
   display: none;
 }
 
-.sidebar:hover .sidebar-header h2 {
+.sidebar:hover .sidebar-header h2,
+.sidebar.sidebar-open .sidebar-header h2 {
   display: block;
 }
 
@@ -173,7 +213,8 @@ export default {
   display: none;
 }
 
-.sidebar:hover .sidebar-menu a span {
+.sidebar:hover .sidebar-menu a span,
+.sidebar.sidebar-open .sidebar-menu a span {
   display: inline;
 }
 
@@ -228,7 +269,8 @@ export default {
   display: none;
 }
 
-.sidebar:hover .sidebar-footer .user-info {
+.sidebar:hover .sidebar-footer .user-info,
+.sidebar.sidebar-open .sidebar-footer .user-info {
   display: flex;
 }
 
@@ -236,8 +278,40 @@ export default {
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-.sidebar:hover .sidebar-footer a {
+.sidebar:hover .sidebar-footer a,
+.sidebar.sidebar-open .sidebar-footer a {
   margin-left: auto;
   transform: scaleX(-1);
 }
+
+@media (max-width: 768px) {
+  .toggle-button {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -250px;
+    transition: left 0.3s ease, width 0.3s ease;
+  }
+
+  .sidebar-open {
+    left: 0;
+    width: 250px;
+  }
+
+  
+  .sidebar:hover .sidebar-header h2,
+  .sidebar:hover .sidebar-menu a span,
+  .sidebar:hover .sidebar-footer .user-info {
+    display: none;
+  }
+
+  .sidebar.sidebar-open .sidebar-header h2,
+  .sidebar.sidebar-open .sidebar-menu a span,
+  .sidebar.sidebar-open .sidebar-footer .user-info {
+    display: block;
+  }
+}
 </style>
+
