@@ -4,6 +4,8 @@
 
 **Professor**: Msc. João Alberto Castelo Branco Oliveira
 
+**Aluno**: Mauricio Lobo Lima
+
 ## Apresentação
 O Hospital Geral Clériston Andrade reconhece a importância de aprimorar o transporte de pacientes dentro da instituição, visando oferecer um serviço mais eficiente e seguro aos usuários. Para atender a essa necessidade, surge a demanda por um sistema que possa facilitar e otimizar as atividades dos maqueiros, responsáveis pelo transporte dos pacientes.
 
