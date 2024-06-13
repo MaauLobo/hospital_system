@@ -50,15 +50,6 @@
           </div>
         </div>
         <div class="input-group">
-          <label for="maqueiro">Maqueiro:</label>
-          <div class="input-icon">
-            <i class="fas fa-user-nurse"></i>
-            <select id="maqueiro" v-model="maqueiroId">
-              <option v-for="maqueiro in maqueiros" :key="maqueiro.id" :value="maqueiro.id">{{ maqueiro.name }}</option>
-            </select>
-          </div>
-        </div>
-        <div class="input-group">
           <label for="date">Data:</label>
           <div class="input-icon">
             <i class="fas fa-calendar-alt"></i>
@@ -91,22 +82,11 @@ export default {
       priority: 'Não Urgente',
       startPoint: '',
       endPoint: '',
-      maqueiros: [],
-      maqueiroId: '',
       date: new Date().toLocaleString(),
       error: ''
     };
   },
   methods: {
-    async fetchMaqueiros() {
-      try {
-        const response = await axios.get('http://localhost:3333/maqueiros');
-        this.maqueiros = response.data.filter(user => user.role === 'Maqueiro');
-      } catch (error) {
-        console.error('Erro ao buscar maqueiros:', error);
-        this.error = 'Erro ao buscar maqueiros. Tente novamente mais tarde.';
-      }
-    },
     async submitRequest() {
       const requestData = {
         patient_name: this.patientName,
@@ -115,7 +95,6 @@ export default {
         initial_point: this.startPoint,
         destination_point: this.endPoint,
         data: this.date,
-        maqueiro_id: this.maqueiroId
       };
 
       try {
@@ -160,11 +139,7 @@ export default {
       this.priority = 'Não Urgente';
       this.startPoint = '';
       this.endPoint = '';
-      this.maqueiroId = '';
     }
-  },
-  mounted() {
-    this.fetchMaqueiros();
   }
 };
 </script>

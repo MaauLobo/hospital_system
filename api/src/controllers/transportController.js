@@ -111,9 +111,9 @@ class TransportRequestController {
 
   async updateTransportRequestStatus(req, res) {
     const { id } = req.params;
-    const { request_status } = req.body;
+    const { request_status, maqueiro_id } = req.body;
 
-    this.transportModel.updateTransportRequestStatus(id, request_status, (err) => {
+    this.transportModel.updateTransportRequestStatus(id, request_status, maqueiro_id, (err) => {
       if (err) {
         return res.status(500).json({ message: 'Erro interno do servidor' });
       }
@@ -150,6 +150,26 @@ class TransportRequestController {
     });
   }
 
+  async rejectTransportRequest(req, res) {
+    const { id } = req.params;
+    const { maqueiro_id } = req.body;
+  
+    this.transportModel.rejectTransportRequest(id, maqueiro_id, (err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+  
+      const description = `Solicitação de transporte recusada pelo maqueiro ${maqueiro_id}`;
+  
+      this.historicModel.registrarHistorico(id, description, (err) => {
+        if (err) {
+          console.log("Erro ao registrar no histórico: ", err);
+        }
+      });
+      return res.status(200).json({ message: 'Solicitação de transporte recusada com sucesso' });
+    });
+  }
+
   async getMaqueiros(req, res) {
     this.userModel.getMaqueiros((err, users) => {
       if (err) {
@@ -158,7 +178,6 @@ class TransportRequestController {
       return res.status(200).json(users);
     });
   }
-
 }
 
 module.exports = TransportRequestController;

@@ -93,21 +93,24 @@ export default {
       }
     },
     async fetchSolicitacoes() {
-      try {
-        const response = await axios.get('http://localhost:3333/transport-requests');
-        console.log('Fetched solicitacoes:', response.data);
-        this.solicitacoes = response.data.filter(
-          solicitacao => solicitacao.request_status === 'Pendente' && solicitacao.maqueiro_id === this.userId
-        );
-        this.historicos = response.data.filter(
-          solicitacao => solicitacao.request_status !== 'Pendente' && solicitacao.maqueiro_id === this.userId
-        );
-        console.log('Filtered solicitacoes:', this.solicitacoes);
-        console.log('Filtered historicos:', this.historicos);
-      } catch (error) {
-        console.error('Erro ao buscar solicitações:', error);
-      }
-    },
+  try {
+    const response = await axios.get('http://localhost:3333/transport-requests');
+    console.log('Fetched solicitacoes:', response.data);
+
+    this.solicitacoes = response.data.filter(
+      solicitacao => solicitacao.request_status === 'Pendente' && (!solicitacao.rejected_by || !solicitacao.rejected_by.split(',').includes(String(this.userId)))
+    );
+
+    this.historicos = response.data.filter(
+      solicitacao => solicitacao.request_status !== 'Pendente' && solicitacao.maqueiro_id === this.userId
+    );
+
+    console.log('Filtered solicitacoes:', this.solicitacoes);
+    console.log('Filtered historicos:', this.historicos);
+  } catch (error) {
+    console.error('Erro ao buscar solicitações:', error);
+  }
+},
     confirmarAceitarSolicitacao(id) {
       Swal.fire({
         title: 'Tem certeza que deseja aceitar a solicitação?',
@@ -136,7 +139,7 @@ export default {
     },
     async aceitarSolicitacao(id) {
       try {
-        await axios.put(`http://localhost:3333/transport-requests/${id}/request-status`, { request_status: 'Aceito' });
+        await axios.put(`http://localhost:3333/transport-requests/${id}/request-status`, { request_status: 'Aceito', maqueiro_id: this.userId });
         this.updateLocalRequestStatus(id, 'Aceito');
         eventBus.updated = !eventBus.updated; // Emitir evento
         Swal.fire({
@@ -158,7 +161,7 @@ export default {
     },
     async recusarSolicitacao(id) {
       try {
-        await axios.put(`http://localhost:3333/transport-requests/${id}/request-status`, { request_status: 'Negado' });
+        await axios.put(`http://localhost:3333/transport-requests/${id}/reject`, { maqueiro_id: this.userId });
         this.updateLocalRequestStatus(id, 'Negado');
         eventBus.updated = !eventBus.updated; // Emitir evento
         Swal.fire({
@@ -242,7 +245,7 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   margin: 20px;
-  overflow-y: auto
+  overflow-y: auto;
 }
 
 h1 {

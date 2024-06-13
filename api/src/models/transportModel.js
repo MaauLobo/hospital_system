@@ -1,5 +1,3 @@
-// models/TransportModel.js
-
 const { db } = require('./db');
 
 class TransportModel {
@@ -26,7 +24,7 @@ class TransportModel {
   }
 
   getTransportRequestsByMaqueiroId(maqueiro_id, callback) {
-    const query = 'SELECT * FROM TransportRequests WHERE maqueiro_id = ?';
+    const query = 'SELECT * FROM TransportRequests WHERE FIND_IN_SET(?, rejected_by) = 0';
     db.query(query, [maqueiro_id], (err, results) => {
       if (err) {
         console.error('Erro ao consultar solicitações de transporte por ID do maqueiro:', err);
@@ -38,10 +36,10 @@ class TransportModel {
 
   insertTransportRequest(data, callback) {
     const query = `
-      INSERT INTO TransportRequests (patient_name, data, initial_point, destination_point, maqueiro_id, priority, status)
+      INSERT INTO TransportRequests (patient_name, data, initial_point, destination_point, priority, status, rejected_by)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
-    const params = [data.patient_name, data.data, data.initial_point, data.destination_point, data.maqueiro_id, data.priority, data.status];
+    const params = [data.patient_name, data.data, data.initial_point, data.destination_point, data.priority, data.status, ''];
     db.query(query, params, (err, result) => {
       if (err) {
         console.error('Erro ao inserir solicitação de transporte:', err);
@@ -52,7 +50,7 @@ class TransportModel {
   }
 
   updateTransportRequest(id, data, callback) {
-    const fields = ['patient_name', 'status', 'priority', 'data', 'initial_point', 'destination_point', 'maqueiro_id'];
+    const fields = ['patient_name', 'status', 'priority', 'data', 'initial_point', 'destination_point', 'maqueiro_id', 'rejected_by'];
     let updates = [];
     let params = [];
 
@@ -101,14 +99,19 @@ class TransportModel {
     });
   }
 
-  updateTransportRequestStatus(id, request_status, callback) {
-    const sql = `UPDATE transportrequests SET request_status = ? WHERE id = ?`;
-    db.query(sql, [request_status, id], callback);
+  updateTransportRequestStatus(id, request_status, maqueiro_id, callback) {
+    const sql = `UPDATE TransportRequests SET request_status = ?, maqueiro_id = ? WHERE id = ?`;
+    db.query(sql, [request_status, maqueiro_id, id], callback);
   }
 
   updateTransportStatus(id, status, callback) {
-    const sql = `UPDATE transportrequests SET status = ? WHERE id = ?`;
+    const sql = `UPDATE TransportRequests SET status = ? WHERE id = ?`;
     db.query(sql, [status, id], callback);
+  }
+
+  rejectTransportRequest(id, maqueiro_id, callback) {
+    const sql = `UPDATE TransportRequests SET rejected_by = IF(rejected_by = '', ?, CONCAT(rejected_by, ',', ?)) WHERE id = ?`;
+    db.query(sql, [maqueiro_id, maqueiro_id, id], callback);
   }
 }
 
