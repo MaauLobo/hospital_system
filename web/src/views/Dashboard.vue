@@ -127,7 +127,7 @@
 <script>
 import { Chart, registerables } from 'chart.js';
 import Sidebar from '@/components/sidebar.vue';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import axios from 'axios';
 import eventBus from '@/eventBus.js';
 import Swal from 'sweetalert2';
@@ -145,7 +145,7 @@ export default {
     HistoricIncident,
     UserOptionsModal,
     RegisterUser,
-    ListUsers
+    ListUsers,
   },
   data() {
     return {
@@ -173,8 +173,8 @@ export default {
       newIncident: {
         solicitacaoId: null,
         descricao: '',
-        dataHora: ''
-      }
+        dataHora: '',
+      },
     };
   },
   created() {
@@ -422,7 +422,7 @@ export default {
       this.newIncident = {
         solicitacaoId: null,
         descricao: '',
-        dataHora: ''
+        dataHora: '',
       };
     },
     async saveIncident() {
@@ -440,7 +440,7 @@ export default {
           didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer);
             toast.addEventListener('mouseleave', Swal.resumeTimer);
-          }
+          },
         });
         this.fetchPatients(); // Refresh data after incident creation
       } catch (error) {
@@ -457,10 +457,10 @@ export default {
           didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer);
             toast.addEventListener('mouseleave', Swal.resumeTimer);
-          }
+          },
         });
       }
-    }
+    },
   },
 };
 </script>
@@ -540,7 +540,7 @@ export default {
 }
 
 .user-info i {
-  cursor:pointer
+  cursor: pointer;
 }
 
 .charts {
@@ -591,15 +591,15 @@ export default {
 
 .filters {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
-  gap: 20px;
+  gap: 10px;
   margin-bottom: 20px;
   padding: 10px;
   background: white;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 
 .filters select,
 .filters input {
@@ -622,8 +622,13 @@ export default {
   text-align: left;
 }
 
+.patient-list {
+  overflow-x: auto; /* Adiciona scroll horizontal à tabela */
+}
+
 .patient-list table {
   width: 100%;
+  min-width: 600px; /* Define a largura mínima da tabela */
   border-collapse: collapse;
 }
 
@@ -779,5 +784,34 @@ button[type="submit"]:hover {
 
 .history-button:hover {
   background-color: #0056b3;
+}
+
+/* Estilos para dispositivos móveis */
+@media (max-width: 768px) {
+  .overview,
+  .charts {
+    flex-direction: column;
+  }
+
+  .info-card,
+  .widget,
+  .patient-list-widget {
+    margin: 10px 0;
+  }
+
+  .patient-list th,
+  .patient-list td {
+    padding: 10px;
+  }
+
+  .filters {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filters select,
+  .filters input {
+    width: 100%;
+  }
 }
 </style>

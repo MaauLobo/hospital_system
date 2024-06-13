@@ -130,15 +130,17 @@ export default {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 10px; /* Adicionado para garantir que o modal tenha espaço em torno dele em telas pequenas */
 }
 
 .modal-content {
   background: #fff;
   padding: 20px;
   border-radius: 8px;
-  width: 80%;
+  width: 100%;
   max-width: 900px;
   position: relative;
+  overflow: hidden;
 }
 
 .close-button {
@@ -147,37 +149,6 @@ export default {
   right: 10px;
   font-size: 1.5em;
   cursor: pointer;
-}
-
-.filters {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.table-container {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th, td {
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-th {
-  background-color: #f4f4f4;
-}
-
-tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
 }
 
 .filters {
@@ -197,5 +168,48 @@ tbody tr:nth-child(even) {
   font-size: 1em;
   border-radius: 5px;
   border: 1px solid #ccc;
+}
+
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: auto; /* Adicionado para scroll horizontal */
+}
+
+table {
+  width: 100%;
+  min-width: 600px; /* Define a largura mínima da tabela */
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background-color: #f4f4f4;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 10px;
+  }
+
+  .filters {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filters input,
+  .filters select {
+    width: 100%;
+  }
 }
 </style>

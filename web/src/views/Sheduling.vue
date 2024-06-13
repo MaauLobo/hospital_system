@@ -322,4 +322,44 @@ button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+/* Estilos para dispositivos móveis */
+@media (max-width: 768px) {
+  .agendamento-container {
+    height: auto;
+    overflow-x: hidden; /* Evita o estouro horizontal */
+  }
+
+  .agendamento-view {
+    padding: 20px;
+    margin: 10px;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  .solicitacao-info, .historico-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .solicitacao-info p, .historico-info p {
+    margin-bottom: 10px;
+  }
+
+  .solicitacao-actions, .historico-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+    justify-content: center;
+  }
+}
 </style>

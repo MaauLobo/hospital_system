@@ -50,8 +50,20 @@ export default {
   align-items: center;
 }
 
-.welcome-container {
-  background: linear-gradient(to right, #4facfe, #00f2fe);
-  color: white;
+/* Estilos para dispositivos móveis */
+@media (max-width: 768px) {
+  .login-box {
+    flex-direction: column;
+    width: 90%;
+    max-width: none;
+  }
+
+  .welcome-container {
+    display: none; /* Ocultar a seção de boas-vindas em telas menores */
+  }
+
+  .login-container {
+    width: 100%;
+  }
 }
 </style>
