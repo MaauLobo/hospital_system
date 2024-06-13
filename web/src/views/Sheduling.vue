@@ -63,6 +63,7 @@ import axios from 'axios';
 import Sidebar from '@/components/sidebar.vue';
 import eventBus from '@/eventBus.js';
 import Swal from 'sweetalert2';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   name: 'AgendamentoView',
@@ -73,17 +74,36 @@ export default {
     return {
       solicitacoes: [],
       historicos: [],
+      userId: null,
     };
   },
   created() {
+    this.decodeToken();
     this.fetchSolicitacoes();
   },
   methods: {
+    decodeToken() {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        this.userId = decodedToken.userid;
+        console.log('Decoded user ID:', this.userId);
+      } else {
+        console.error('Token not found');
+      }
+    },
     async fetchSolicitacoes() {
       try {
         const response = await axios.get('http://localhost:3333/transport-requests');
-        this.solicitacoes = response.data.filter(solicitacao => solicitacao.request_status === 'Pendente');
-        this.historicos = response.data.filter(solicitacao => solicitacao.request_status !== 'Pendente');
+        console.log('Fetched solicitacoes:', response.data);
+        this.solicitacoes = response.data.filter(
+          solicitacao => solicitacao.request_status === 'Pendente' && solicitacao.maqueiro_id === this.userId
+        );
+        this.historicos = response.data.filter(
+          solicitacao => solicitacao.request_status !== 'Pendente' && solicitacao.maqueiro_id === this.userId
+        );
+        console.log('Filtered solicitacoes:', this.solicitacoes);
+        console.log('Filtered historicos:', this.historicos);
       } catch (error) {
         console.error('Erro ao buscar solicitações:', error);
       }
