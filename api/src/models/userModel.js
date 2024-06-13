@@ -1,31 +1,40 @@
-// models/UserModel.js
-
 const { db } = require('./db');
 
 class UserModel {
   getAllUsers(callback) {
-    const getAllUsersQuery = `
-      SELECT * FROM Users
-    `;
-
+    const getAllUsersQuery = `SELECT * FROM Users`;
     db.query(getAllUsersQuery, (err, result) => {
       if (err) {
         return callback(err, null);
       }
-
       return callback(null, result);
     });
   }
-    getMaqueiros(callback) {
-      const query = "SELECT * FROM Users WHERE role = 'Maqueiro' AND perms = 'User'";
-      db.query(query, (err, results) => {
-        if (err) {
-          console.error('Erro ao consultar maqueiros:', err);
-          return callback(err, null);
-        }
-        return callback(null, results);
-      });
-    }
+
+  updateUser(userId, userData, callback) {
+    const updateUserQuery = `
+      UPDATE Users 
+      SET username = ?, name = ?, role = ?, perms = ?
+      WHERE id = ?
+    `;
+    const { username, name, role, perms } = userData;
+    db.query(updateUserQuery, [username, name, role, perms, userId], (err, result) => {
+      if (err) {
+        return callback(err, null);
+      }
+      return callback(null, result);
+    });
+  }
+
+  deleteUser(userId, callback) {
+    const deleteUserQuery = `DELETE FROM Users WHERE id = ?`;
+    db.query(deleteUserQuery, [userId], (err, result) => {
+      if (err) {
+        return callback(err, null);
+      }
+      return callback(null, result);
+    });
+  }
 }
 
 module.exports = UserModel;

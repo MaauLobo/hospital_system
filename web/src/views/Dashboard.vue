@@ -9,6 +9,7 @@
           <i class="fas fa-user-circle" v-if="isAdmin" @click="toggleUserOptionsModal"></i>
           <UserOptionsModal v-if="isAdmin" :show="showUserOptionsModal" @navigate="handleNavigation" />
           <RegisterUser v-if="isAdmin" :show="showRegisterUserModal" @close="closeRegisterUserModal" />
+          <ListUsers v-if="isAdmin" :show="showListUsersModal" @close="closeListUsersModal" />
         </div>
       </div>
       <div class="overview">
@@ -133,6 +134,7 @@ import Swal from 'sweetalert2';
 import HistoricIncident from '@/components/HistoricIncident.vue';
 import UserOptionsModal from '@/components/UserOptionsModal.vue';
 import RegisterUser from '@/components/RegisterUser.vue';
+import ListUsers from '@/components/ListerUser.vue';
 
 Chart.register(...registerables);
 
@@ -142,7 +144,8 @@ export default {
     Sidebar,
     HistoricIncident,
     UserOptionsModal,
-    RegisterUser
+    RegisterUser,
+    ListUsers
   },
   data() {
     return {
@@ -150,6 +153,7 @@ export default {
       showIncidentHistoryModal: false,
       showUserOptionsModal: false,
       showRegisterUserModal: false,
+      showListUsersModal: false,
       infoCards: [
         { value: 0, label: 'Total Pacientes', icon: 'fas fa-user', color: '#28a745' },
         { value: 0, label: 'Pacientes Urgentes', icon: 'fas fa-exclamation-circle', color: '#dc3545' },
@@ -221,11 +225,14 @@ export default {
       if (page === 'register') {
         this.showRegisterUserModal = true;
       } else if (page === 'list') {
-        // Aqui você pode adicionar o código para exibir a lista de usuários
+        this.showListUsersModal = true;
       }
     },
     closeRegisterUserModal() {
       this.showRegisterUserModal = false;
+    },
+    closeListUsersModal() {
+      this.showListUsersModal = false;
     },
     openIncidentHistoryModal() {
       this.showIncidentHistoryModal = true;
@@ -530,6 +537,10 @@ export default {
   margin: 5px 0 0;
   font-size: 0.9em;
   color: #6c757d;
+}
+
+.user-info i {
+  cursor:pointer
 }
 
 .charts {

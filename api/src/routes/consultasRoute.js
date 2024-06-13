@@ -44,4 +44,7 @@ router.post('/incidents', (req, res) => incidentController.createIncident(req, r
 router.put('/incidents/:id', (req, res) => incidentController.updateIncident(req, res));
 router.delete('/incidents/:id', (req, res) => incidentController.deleteIncident(req, res));
 
+router.put('/users/:id', (req, res) => userController.updateUser(req, res));
+router.delete('/users/:id', (req, res) => userController.deleteUser(req, res));
+
 module.exports = router;
