@@ -23,23 +23,20 @@
           <span>Agendamentos</span>
         </router-link>
       </li>
-      <!-- <li>
-        <a href="#">
-          <i class="fas fa-chart-line"></i>
-          <span>Relatórios</span>
-        </a>
-      </li> -->
-      <!-- <li>
-        <a href="#">
-          <i class="fas fa-cog"></i>
-          <span>Configurações</span>
-        </a>
-      </li> -->
     </ul>
     <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-detail">
+          <i class="fas fa-user"></i>
+          <span>{{ name }}</span>
+        </div>
+        <div class="role-detail">
+          <i class="fas fa-id-badge"></i>
+          <span>{{ role }}</span>
+        </div>
+      </div>
       <a href="#" @click.prevent="confirmLogout">
         <i class="fas fa-sign-out-alt"></i>
-        <span>Logout</span>
       </a>
     </div>
   </div>
@@ -48,7 +45,7 @@
 <script>
 import { useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import { ref, computed } from 'vue';
 
 export default {
@@ -56,12 +53,14 @@ export default {
   setup() {
     const router = useRouter();
 
+    const name = ref('');
     const role = ref('');
     const perms = ref('');
 
     const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwtDecode(token);
+      name.value = decodedToken.name || 'Desconhecido';
       role.value = decodedToken.role || 'Desconhecido';
       perms.value = decodedToken.perms || '';
     }
@@ -98,8 +97,10 @@ export default {
     return {
       confirmLogout,
       showRequests,
+      name,
+      role
     };
-  },
+  }
 };
 </script>
 
@@ -187,6 +188,28 @@ export default {
 .sidebar-footer {
   padding: 20px;
   margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-footer .user-info {
+  display: none;
+  flex-grow: 1;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.sidebar-footer .user-detail,
+.sidebar-footer .role-detail {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.sidebar-footer .user-detail i,
+.sidebar-footer .role-detail i {
+  margin-right: 10px;
 }
 
 .sidebar-footer a {
@@ -205,11 +228,16 @@ export default {
   display: none;
 }
 
-.sidebar:hover .sidebar-footer a span {
-  display: inline;
+.sidebar:hover .sidebar-footer .user-info {
+  display: flex;
 }
 
 .sidebar-footer a:hover {
   background-color: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar:hover .sidebar-footer a {
+  margin-left: auto;
+  transform: scaleX(-1);
 }
 </style>
