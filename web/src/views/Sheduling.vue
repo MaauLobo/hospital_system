@@ -11,6 +11,7 @@
               <p>Paciente: {{ solicitacao.patient_name }}</p>
               <p>Destino: {{ solicitacao.destination_point }}</p>
               <p>Hora: {{ formatDateTime(solicitacao.created_at) }}</p>
+              <p>Prioridade: {{ solicitacao.priority }}</p>
             </div>
             <div class="solicitacao-actions">
               <button @click="confirmarAceitarSolicitacao(solicitacao.id)">
@@ -34,6 +35,7 @@
               <p>Destino: {{ historico.destination_point }}</p>
               <p>Hora: {{ formatDateTime(historico.created_at) }}</p>
               <p>Status: {{ historico.status }}</p>
+              <p>Prioridade: {{ historico.priority }}</p>
               <div class="historico-actions" v-if="historico.request_status !== 'Negado'">
                 <button 
                   @click="updateStatus(historico.id, 'Em transporte')" 
@@ -93,24 +95,24 @@ export default {
       }
     },
     async fetchSolicitacoes() {
-  try {
-    const response = await axios.get('https://api-hospital-8shg.onrender.com/transport-requests');
-    console.log('Fetched solicitacoes:', response.data);
+      try {
+        const response = await axios.get('https://api-hospital-8shg.onrender.com/transport-requests');
+        console.log('Fetched solicitacoes:', response.data);
 
-    this.solicitacoes = response.data.filter(
-      solicitacao => solicitacao.request_status === 'Pendente' && (!solicitacao.rejected_by || !solicitacao.rejected_by.split(',').includes(String(this.userId)))
-    );
+        this.solicitacoes = response.data.filter(
+          solicitacao => solicitacao.request_status === 'Pendente' && (!solicitacao.rejected_by || !solicitacao.rejected_by.split(',').includes(String(this.userId)))
+        );
 
-    this.historicos = response.data.filter(
-      solicitacao => solicitacao.request_status !== 'Pendente' && solicitacao.maqueiro_id === this.userId
-    );
+        this.historicos = response.data.filter(
+          solicitacao => solicitacao.request_status !== 'Pendente' && solicitacao.maqueiro_id === this.userId
+        );
 
-    console.log('Filtered solicitacoes:', this.solicitacoes);
-    console.log('Filtered historicos:', this.historicos);
-  } catch (error) {
-    console.error('Erro ao buscar solicitações:', error);
-  }
-},
+        console.log('Filtered solicitacoes:', this.solicitacoes);
+        console.log('Filtered historicos:', this.historicos);
+      } catch (error) {
+        console.error('Erro ao buscar solicitações:', error);
+      }
+    },
     confirmarAceitarSolicitacao(id) {
       Swal.fire({
         title: 'Tem certeza que deseja aceitar a solicitação?',
